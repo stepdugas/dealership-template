@@ -1,0 +1,214 @@
+<!--
+  ContactView — contact page with form, hours, address, and Google Maps embed.
+-->
+<template>
+  <PageLayout>
+    <!-- Header banner -->
+    <div class="bg-dark-800 pt-28 pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-extrabold text-white" data-aos="fade-up">Contact Us</h1>
+        <p class="text-gray-400 mt-2" data-aos="fade-up" data-aos-delay="100">
+          We'd love to hear from you — reach out any time.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+
+        <!-- Contact form (3/5 cols) -->
+        <div class="lg:col-span-3" data-aos="fade-right">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+
+          <form @submit.prevent="submit" class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="form-label">First Name *</label>
+                <input v-model="form.firstName" class="form-input" placeholder="Jane" required />
+              </div>
+              <div>
+                <label class="form-label">Last Name *</label>
+                <input v-model="form.lastName" class="form-input" placeholder="Smith" required />
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label">Email Address *</label>
+              <input v-model="form.email" type="email" class="form-input" placeholder="jane@example.com" required />
+            </div>
+
+            <div>
+              <label class="form-label">Phone Number</label>
+              <input v-model="form.phone" type="tel" class="form-input" placeholder="(555) 000-0000" />
+            </div>
+
+            <div>
+              <label class="form-label">Subject</label>
+              <select v-model="form.subject" class="form-input">
+                <option value="">Select a subject…</option>
+                <option>General Inquiry</option>
+                <option>Vehicle Inquiry</option>
+                <option>Financing</option>
+                <option>Service / Repair</option>
+                <option>Sell Us Your Car</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label">Message *</label>
+              <textarea
+                v-model="form.message"
+                class="form-input resize-none"
+                rows="5"
+                placeholder="How can we help you?"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary w-full text-base py-4" :disabled="submitting">
+              {{ submitting ? 'Sending…' : 'Send Message' }}
+            </button>
+
+            <p v-if="success" class="text-emerald-600 font-medium text-center">
+              ✓ Message received! We'll reply within 1 business day.
+            </p>
+            <p v-if="errorMsg" class="text-red-500 text-sm text-center">{{ errorMsg }}</p>
+          </form>
+        </div>
+
+        <!-- Info sidebar (2/5 cols) -->
+        <div class="lg:col-span-2 space-y-8" data-aos="fade-left">
+
+          <!-- Contact details card -->
+          <div class="bg-gray-50 rounded-2xl p-7 space-y-5">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Phone</p>
+                <a :href="'tel:' + PHONE" class="text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors">
+                  {{ PHONE }}
+                </a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Email</p>
+                <a :href="'mailto:' + EMAIL" class="text-gray-900 font-bold hover:text-primary-600 transition-colors">
+                  {{ EMAIL }}
+                </a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Address</p>
+                <p class="text-gray-900 font-bold">{{ ADDRESS }}<br />{{ CITY_STATE_ZIP }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hours card -->
+          <div class="bg-gray-50 rounded-2xl p-7">
+            <h3 class="font-bold text-gray-900 mb-4">Business Hours</h3>
+            <dl class="space-y-2 text-sm">
+              <div v-for="(row, i) in hoursRows" :key="i" class="flex justify-between">
+                <dt class="text-gray-500">{{ row.label }}</dt>
+                <dd class="font-medium text-gray-900">{{ row.value }}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Google Maps embed -->
+          <div class="rounded-2xl overflow-hidden shadow-md" data-aos="fade-up">
+            <!-- [GOOGLE_MAPS_EMBED_URL] — paste your embed iframe src from Google Maps -->
+            <div
+              v-if="GOOGLE_MAPS_EMBED_URL && !GOOGLE_MAPS_EMBED_URL.startsWith('[')"
+              class="w-full h-56"
+            >
+              <iframe
+                :src="GOOGLE_MAPS_EMBED_URL"
+                width="100%"
+                height="100%"
+                style="border:0"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Dealership location map"
+              ></iframe>
+            </div>
+            <div
+              v-else
+              class="w-full h-56 bg-gray-200 flex items-center justify-center text-gray-400 text-sm"
+            >
+              [GOOGLE_MAPS_EMBED_URL] — set in config.js
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </PageLayout>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import PageLayout from '../components/layout/PageLayout.vue'
+import { submitContact } from '../api'
+import { PHONE, EMAIL, ADDRESS, CITY_STATE_ZIP, HOURS, GOOGLE_MAPS_EMBED_URL } from '../config'
+
+const form = ref({
+  firstName: '', lastName: '', email: '', phone: '', subject: '', message: '',
+})
+const submitting = ref(false)
+const success    = ref(false)
+const errorMsg   = ref('')
+
+async function submit() {
+  submitting.value = true
+  success.value    = false
+  errorMsg.value   = ''
+  try {
+    await submitContact({
+      name:    `${form.value.firstName} ${form.value.lastName}`.trim(),
+      email:   form.value.email,
+      phone:   form.value.phone,
+      message: `[${form.value.subject || 'General'}] ${form.value.message}`,
+    })
+    success.value = true
+    form.value = { firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' }
+  } catch {
+    errorMsg.value = 'Something went wrong. Please call us directly or try again.'
+  } finally {
+    submitting.value = false
+  }
+}
+
+const hoursRows = [
+  { label: 'Monday',    value: HOURS.monday },
+  { label: 'Tuesday',   value: HOURS.tuesday },
+  { label: 'Wednesday', value: HOURS.wednesday },
+  { label: 'Thursday',  value: HOURS.thursday },
+  { label: 'Friday',    value: HOURS.friday },
+  { label: 'Saturday',  value: HOURS.saturday },
+  { label: 'Sunday',    value: HOURS.sunday },
+]
+</script>

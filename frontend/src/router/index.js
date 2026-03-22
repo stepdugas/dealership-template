@@ -37,6 +37,12 @@ const routes = [
     component: () => import('../views/ContactView.vue'),
     meta: { title: 'Contact Us' },
   },
+  {
+    path: '/intake',
+    name: 'ClientIntake',
+    component: () => import('../views/ClientIntakeForm.vue'),
+    meta: { title: 'Get Your Site Online' },
+  },
 
   // ── Optional scaffold pages (route + placeholder component) ──────────
   {

@@ -3,17 +3,20 @@ package com.dealership.api.service;
 import com.dealership.api.dto.ContactRequest;
 import com.dealership.api.model.ContactSubmission;
 import com.dealership.api.repository.ContactSubmissionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ContactService {
 
     private final ContactSubmissionRepository contactRepository;
+
+    // Constructor for dependency injection
+    public ContactService(ContactSubmissionRepository contactRepository) {
+        this.contactRepository = contactRepository;
+    }
 
     @Transactional
     public ContactSubmission save(ContactRequest req) {

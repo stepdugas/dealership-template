@@ -66,6 +66,12 @@ export const updateCar = (id, carData) => api.put(`/api/inventory/${id}`, carDat
  */
 export const deleteCar = (id) => api.delete(`/api/inventory/${id}`)
 
+/**
+ * Refresh KBB valuation for a specific vehicle (admin only).
+ * @param {number|string} id
+ */
+export const refreshKBBValue = (id) => api.post(`/api/inventory/${id}/refresh-kbb`)
+
 // ── Contact endpoint ────────────────────────────────────────────────────
 
 /**

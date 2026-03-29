@@ -84,6 +84,41 @@
             </div>
           </div>
 
+          <!-- KBB Value Display & Comparison -->
+          <div v-if="car.kbbValue" class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6" data-aos="fade-up">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-emerald-700 uppercase tracking-wide mb-1">Kelley Blue Book Value</p>
+                <p class="text-2xl font-extrabold text-emerald-600">{{ formatPrice(car.kbbValue) }}</p>
+                <div v-if="priceComparison" class="mt-3 flex items-center gap-2">
+                  <span class="text-sm font-medium" :class="priceComparison.isBelowKBB ? 'text-emerald-600' : 'text-amber-600'">
+                    {{ priceComparison.label }}
+                  </span>
+                  <span class="text-sm font-bold" :class="priceComparison.isBelowKBB ? 'text-emerald-600' : 'text-amber-600'">
+                    {{ formatPrice(Math.abs(priceComparison.difference)) }}
+                  </span>
+                </div>
+              </div>
+              <button
+                v-if="isAdmin"
+                @click="refreshKBB"
+                :disabled="kbbLoading"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <svg v-if="!kbbLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span v-if="kbbLoading" class="inline-block animate-spin">⟳</span>
+                {{ kbbLoading ? 'Refreshing…' : 'Refresh KBB' }}
+              </button>
+            </div>
+            <p v-if="kbbLastUpdated" class="text-xs text-emerald-600 mt-3">
+              Updated {{ formatDate(kbbLastUpdated) }}
+            </p>
+            <p v-if="kbbRefreshSuccess" class="text-sm text-emerald-700 font-medium mt-2">✓ KBB value updated successfully!</p>
+            <p v-if="kbbRefreshError" class="text-sm text-red-600 font-medium mt-2">✗ Error refreshing KBB value. Please try again.</p>
+          </div>
+
           <!-- Specs table -->
           <div data-aos="fade-up">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Vehicle Details</h2>
@@ -185,15 +220,22 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import PageLayout from '../components/layout/PageLayout.vue'
-import { getCar, submitContact } from '../api'
+import { getCar, submitContact, refreshKBBValue } from '../api'
 import { PHONE } from '../config'
 
 const route  = useRoute()
 const car    = ref(null)
 const loading = ref(true)
 const error  = ref(false)
+const isAdmin = ref(false)
 
 const activeIdx = ref(0)
+
+// KBB functionality
+const kbbLoading = ref(false)
+const kbbRefreshSuccess = ref(false)
+const kbbRefreshError = ref(false)
+const kbbLastUpdated = ref(null)
 
 const images = computed(() => {
   const imgs = car.value?.images ?? []
@@ -231,16 +273,54 @@ const features = computed(() => {
   try { return JSON.parse(f) } catch { return [] }
 })
 
+const priceComparison = computed(() => {
+  if (!car.value?.price || !car.value?.kbbValue) return null
+  const difference = car.value.kbbValue - car.value.price
+  const isBelowKBB = difference > 0
+  return {
+    difference,
+    isBelowKBB,
+    label: isBelowKBB ? `✓ ${Math.round((difference / car.value.kbbValue) * 100)}% below KBB` : `Above KBB by ${Math.round((Math.abs(difference) / car.value.kbbValue) * 100)}%`
+  }
+})
+
+async function refreshKBB() {
+  if (!car.value?.id) return
+  kbbLoading.value = true
+  kbbRefreshSuccess.value = false
+  kbbRefreshError.value = false
+  try {
+    const res = await refreshKBBValue(car.value.id)
+    car.value = res.data
+    kbbLastUpdated.value = res.data.kbbLastUpdated
+    kbbRefreshSuccess.value = true
+    setTimeout(() => { kbbRefreshSuccess.value = false }, 3000)
+  } catch (err) {
+    kbbRefreshError.value = true
+    setTimeout(() => { kbbRefreshError.value = false }, 3000)
+  } finally {
+    kbbLoading.value = false
+  }
+}
+
 onMounted(async () => {
   try {
     const res = await getCar(route.params.id)
     car.value = res.data
+    kbbLastUpdated.value = res.data.kbbLastUpdated
+    isAdmin.value = !!localStorage.getItem('admin_token')
   } catch {
     error.value = true
   } finally {
     loading.value = false
   }
 })
+
+function formatDate(dateString) {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
 
 // Contact form
 const form = ref({ name: '', email: '', phone: '', message: '' })

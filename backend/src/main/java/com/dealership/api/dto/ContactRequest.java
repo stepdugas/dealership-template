@@ -2,12 +2,10 @@ package com.dealership.api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 
 /**
  * Request body for POST /api/contact.
  */
-@Data
 public class ContactRequest {
 
     @NotBlank(message = "Name is required")
@@ -24,4 +22,18 @@ public class ContactRequest {
 
     /** Optional — if the inquiry is about a specific car. */
     private Long carId;
+
+    // Getters
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPhone() { return phone; }
+    public String getMessage() { return message; }
+    public Long getCarId() { return carId; }
+
+    // Setters
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setMessage(String message) { this.message = message; }
+    public void setCarId(Long carId) { this.carId = carId; }
 }

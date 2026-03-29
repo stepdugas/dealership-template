@@ -3,7 +3,6 @@ package com.dealership.api.controller;
 import com.dealership.api.dto.LoginRequest;
 import com.dealership.api.security.JwtTokenProvider;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/admin")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -32,6 +30,11 @@ public class AuthController {
 
     @Value("${dealership.admin.password}")
     private String adminPassword;
+
+    // Constructor for dependency injection
+    public AuthController(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {

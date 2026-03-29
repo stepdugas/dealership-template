@@ -8,7 +8,11 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl md:text-4xl font-extrabold text-white">Browse Inventory</h1>
         <p class="text-gray-400 mt-2">
-          {{ total !== null ? `${total} vehicle${total !== 1 ? 's' : ''} available` : 'Loading…' }}
+          <span v-if="total !== null">
+            <span class="font-semibold text-white">{{ total }}</span> vehicle{{ total !== 1 ? 's' : '' }} found
+            <span v-if="hasActiveFilters" class="text-gray-300">(filtered)</span>
+          </span>
+          <span v-else>Loading…</span>
         </p>
       </div>
     </div>
@@ -44,14 +48,29 @@
 
       <!-- Car grid -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <CarCard
-          v-for="(car, i) in cars"
-          :key="car.id"
-          :car="car"
-          data-aos="fade-up"
-          :data-aos-delay="(i % 3) * 80"
-        />
+        <div v-for="(car, i) in cars" :key="car.id" class="relative group" data-aos="fade-up" :data-aos-delay="(i % 3) * 80">
+          <CarCard :car="car" />
+          <!-- Edit button for admins -->
+          <button
+            v-if="isAdmin"
+            @click="openEditModal(car)"
+            class="absolute top-3 right-3 p-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all transform group-hover:scale-100 scale-90 origin-top-right shadow-lg"
+            title="Edit vehicle"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+        </div>
       </div>
+
+      <!-- Edit Modal -->
+      <EditCarModal
+        :open="editModalOpen"
+        :car="selectedCar"
+        @close="editModalOpen = false"
+        @save="onCarUpdated"
+      />
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-12">
@@ -82,10 +101,11 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import PageLayout from '../components/layout/PageLayout.vue'
 import FilterBar  from '../components/inventory/FilterBar.vue'
 import CarCard    from '../components/inventory/CarCard.vue'
+import EditCarModal from '../components/EditCarModal.vue'
 import { getInventory } from '../api'
 
 const cars       = ref([])
@@ -97,6 +117,11 @@ const totalPages = ref(1)
 const PAGE_SIZE  = 12
 
 const filters = ref({})
+const isAdmin = ref(false)
+const editModalOpen = ref(false)
+const selectedCar = ref(null)
+
+const hasActiveFilters = computed(() => Object.keys(filters.value).length > 0)
 
 async function fetchInventory() {
   loading.value = true
@@ -126,5 +151,22 @@ async function fetchInventory() {
 watch(filters, () => { page.value = 0; fetchInventory() }, { deep: true })
 watch(page, fetchInventory)
 
-onMounted(fetchInventory)
+function openEditModal(car) {
+  selectedCar.value = car
+  editModalOpen.value = true
+}
+
+function onCarUpdated(updatedCar) {
+  // Update the car in the list
+  const idx = cars.value.findIndex(c => c.id === updatedCar.id)
+  if (idx !== -1) {
+    cars.value[idx] = updatedCar
+  }
+  selectedCar.value = null
+}
+
+onMounted(() => {
+  isAdmin.value = !!localStorage.getItem('admin_token')
+  fetchInventory()
+})
 </script>

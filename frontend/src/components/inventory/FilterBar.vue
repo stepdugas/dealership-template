@@ -31,12 +31,23 @@
       </svg>
     </button>
 
+    <!-- Search bar -->
+    <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
+      <input
+        v-model="local.search"
+        type="text"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        placeholder="Search by make, model, VIN..."
+        @input="emit"
+      />
+    </div>
+
     <!-- Filters grid -->
     <div
       class="transition-all duration-300 overflow-hidden"
       :class="open || isDesktop ? 'max-h-screen' : 'max-h-0'"
     >
-      <div class="px-6 pb-6 pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div class="px-6 pb-6 pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 
         <!-- Make -->
         <div>
@@ -74,13 +85,32 @@
           />
         </div>
 
+        <!-- Min Price -->
+        <div>
+          <label class="form-label">Min Price</label>
+          <input
+            v-model.number="local.minPrice"
+            type="number"
+            class="form-input"
+            placeholder="e.g. 5000"
+            min="0"
+            step="1000"
+            @input="emit"
+          />
+        </div>
+
         <!-- Max Price -->
         <div>
           <label class="form-label">Max Price</label>
-          <select v-model.number="local.maxPrice" class="form-input" @change="emit">
-            <option :value="null">Any</option>
-            <option v-for="p in priceOptions" :key="p.value" :value="p.value">{{ p.label }}</option>
-          </select>
+          <input
+            v-model.number="local.maxPrice"
+            type="number"
+            class="form-input"
+            placeholder="e.g. 50000"
+            min="0"
+            step="1000"
+            @input="emit"
+          />
         </div>
 
         <!-- Max Mileage -->
@@ -135,9 +165,11 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 const currentYear = new Date().getFullYear()
 
 const local = ref({
+  search: props.modelValue.search ?? '',
   make: props.modelValue.make ?? '',
   model: props.modelValue.model ?? '',
   year: props.modelValue.year ?? null,
+  minPrice: props.modelValue.minPrice ?? null,
   maxPrice: props.modelValue.maxPrice ?? null,
   maxMileage: props.modelValue.maxMileage ?? null,
   condition: props.modelValue.condition ?? '',

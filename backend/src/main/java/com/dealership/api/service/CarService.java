@@ -5,7 +5,6 @@ import com.dealership.api.model.Car;
 import com.dealership.api.model.CarImage;
 import com.dealership.api.repository.CarRepository;
 import jakarta.persistence.criteria.Predicate;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,10 +18,14 @@ import java.util.Optional;
  * Business logic for car inventory operations.
  */
 @Service
-@RequiredArgsConstructor
 public class CarService {
 
     private final CarRepository carRepository;
+
+    // Constructor for dependency injection
+    public CarService(CarRepository carRepository) {
+        this.carRepository = carRepository;
+    }
 
     // ── Public queries ────────────────────────────────────────────────
 

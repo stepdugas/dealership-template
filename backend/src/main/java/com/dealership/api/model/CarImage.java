@@ -2,8 +2,6 @@ package com.dealership.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * JPA entity for the {@code car_images} table.
@@ -11,8 +9,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "car_images")
-@Data
-@NoArgsConstructor
 public class CarImage {
 
     @Id
@@ -31,4 +27,21 @@ public class CarImage {
     private boolean isPrimary = false;
 
     private int sortOrder = 0;
+
+    // Constructor
+    public CarImage() {}
+
+    // Getters
+    public Long getId() { return id; }
+    public Car getCar() { return car; }
+    public String getImageUrl() { return imageUrl; }
+    public boolean isPrimary() { return isPrimary; }
+    public int getSortOrder() { return sortOrder; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setCar(Car car) { this.car = car; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setPrimary(boolean primary) { isPrimary = primary; }
+    public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
 }

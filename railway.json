@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.json.app/railway.schema.json",
+  "build": {
+    "builder": "BUILDPACKS"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "startCommand": "java -jar target/dealership-api-0.0.1-SNAPSHOT.jar",
+    "restartPolicyMaxRetries": 5
+  }
+}

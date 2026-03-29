@@ -1,9 +1,6 @@
 package com.dealership.api.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Maps to the existing {@code dealership_config} table.
@@ -11,9 +8,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "dealership_config")
-@Getter
-@Setter
-@NoArgsConstructor
 public class DealershipConfig {
 
     @Id
@@ -26,8 +20,36 @@ public class DealershipConfig {
     @Column(columnDefinition = "TEXT")
     private String value;
 
+    // Constructors
+    public DealershipConfig() {}
+
     public DealershipConfig(String key, String value) {
         this.key = key;
+        this.value = value;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
         this.value = value;
     }
 }

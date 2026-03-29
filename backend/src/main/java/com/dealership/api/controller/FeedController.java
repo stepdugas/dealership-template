@@ -10,8 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Public feed endpoints.
  *
- * GET /api/feeds/facebook-marketplace.xml — Facebook / Meta Catalog XML feed
- * GET /api/feeds/products.xml             — alias used by some Meta integrations
+ * GET /api/feeds/facebook-marketplace        — Facebook / Meta Catalog XML feed
+ * GET /api/feeds/facebook-marketplace.xml    — same as above (with .xml extension)
+ * GET /api/feeds/products.xml                — alias used by some Meta integrations
+ *
+ * All endpoints return XML with Content-Type: application/xml
+ * Cache duration: 1 hour (configurable)
+ *
+ * Feed includes:
+ * - All cars with status="available"
+ * - Car details: make, model, year, price, mileage, VIN, colors, etc.
+ * - Images (first image as primary, others as additional)
+ * - Dealership contact info from config
  */
 @RestController
 @RequestMapping("/api/feeds")
@@ -23,8 +33,13 @@ public class FeedController {
         this.facebookFeedGenerator = facebookFeedGenerator;
     }
 
-    @GetMapping(path = "/facebook-marketplace.xml", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(path = "/facebook-marketplace", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> facebookMarketplaceFeed() {
+        return buildXmlResponse();
+    }
+
+    @GetMapping(path = "/facebook-marketplace.xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> facebookMarketplaceFeedXml() {
         return buildXmlResponse();
     }
 

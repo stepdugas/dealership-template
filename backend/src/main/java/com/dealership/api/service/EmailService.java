@@ -144,4 +144,25 @@ public class EmailService {
             // Don't throw — log and continue
         }
     }
+
+    /**
+     * Send a test email (for OpenClaw configuration testing).
+     * Simple email with custom to/subject/body.
+     */
+    public void sendTestEmail(String to, String subject, String body) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(to);
+            message.setReplyTo(replyToEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+            logger.info("Test email sent successfully to: {}", to);
+        } catch (Exception e) {
+            logger.error("Failed to send test email to {}", to, e);
+            throw new RuntimeException("Failed to send test email: " + e.getMessage(), e);
+        }
+    }
 }

@@ -53,6 +53,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/feeds/**").permitAll()
                 // Public contact form submission
                 .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+                // Public client intake form
+                .requestMatchers(HttpMethod.POST, "/api/client-intake").permitAll()
+                // Public email test endpoint (for OpenClaw)
+                .requestMatchers(HttpMethod.POST, "/api/email/test").permitAll()
                 // Admin login — public
                 .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                 // Manager login — public

@@ -76,6 +76,20 @@ const routes = [
     meta: { title: 'Blog' },
   },
 
+  // ── Manager panel ────────────────────────────────────────────────────
+  {
+    path: '/manager/login',
+    name: 'ManagerLogin',
+    component: () => import('../views/manager/ManagerLoginView.vue'),
+    meta: { title: 'Manager Login', isManagerPublic: true },
+  },
+  {
+    path: '/manager',
+    name: 'ManagerDashboard',
+    component: () => import('../views/manager/ManagerDashboardView.vue'),
+    meta: { title: 'Manager Dashboard', requiresManager: true },
+  },
+
   // ── Admin panel ──────────────────────────────────────────────────────
   {
     path: '/admin/login',
@@ -150,6 +164,14 @@ router.beforeEach((to, from, next) => {
     const isLoggedIn = localStorage.getItem('admin_token')
     if (!isLoggedIn) {
       return next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
+    }
+  }
+
+  // Manager auth check
+  if (to.meta.requiresManager) {
+    const isLoggedIn = localStorage.getItem('manager_token')
+    if (!isLoggedIn) {
+      return next({ name: 'ManagerLogin', query: { redirect: to.fullPath } })
     }
   }
 

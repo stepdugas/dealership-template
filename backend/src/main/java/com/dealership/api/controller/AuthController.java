@@ -42,7 +42,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Invalid credentials"));
         }
-        String token = jwtTokenProvider.generateToken(req.getUsername());
-        return ResponseEntity.ok(Map.of("token", token));
+        String token = jwtTokenProvider.generateToken(req.getUsername(), "ADMIN");
+        return ResponseEntity.ok(Map.of("token", token, "role", "ADMIN"));
     }
 }

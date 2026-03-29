@@ -49,10 +49,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public read access to inventory
                 .requestMatchers(HttpMethod.GET,  "/api/inventory/**").permitAll()
+                // Public feeds (Facebook Marketplace, etc.)
+                .requestMatchers(HttpMethod.GET,  "/api/feeds/**").permitAll()
                 // Public contact form submission
                 .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
                 // Admin login — public
                 .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
+                // Manager login — public
+                .requestMatchers(HttpMethod.POST, "/api/manager/login").permitAll()
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

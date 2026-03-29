@@ -54,17 +54,25 @@ Railway auto-detects the backend. Configure:
 
 1. **Service Name:** `dealership-backend`
 
-2. **Environment Variables:**
+2. **Environment Variables** (match exactly — these map to `application.properties`):
    ```
-   SPRING_DATASOURCE_URL=postgresql://[your-db-url]:5432/[db-name]
-   SPRING_DATASOURCE_USERNAME=[db-user]
-   SPRING_DATASOURCE_PASSWORD=[db-password]
-   APP_JWT_SECRET=[32-char-secret]
-   APP_ADMIN_USERNAME=[admin-user]
-   APP_ADMIN_PASSWORD=[admin-password]
-   APP_CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
-   SERVER_PORT=8080
+   DB_USERNAME=postgres
+   DB_PASSWORD=[your-db-password]
+   JWT_SECRET=[min-32-char-random-string]
+   ADMIN_USERNAME=admin
+   ADMIN_PASSWORD=[strong-admin-password]
+   MANAGER_USERNAME=manager
+   MANAGER_PASSWORD=[strong-manager-password]
+   CLOUDINARY_CLOUD_NAME=[your-cloudinary-name]
+   CLOUDINARY_API_KEY=[your-cloudinary-key]
+   CLOUDINARY_API_SECRET=[your-cloudinary-secret]
+   MAIL_USERNAME=[your-gmail]
+   MAIL_PASSWORD=[gmail-app-password]
+   dealership.cors.allowed-origins=https://yourdomain.com,https://www.yourdomain.com
    ```
+   Note: Railway PostgreSQL plugin sets `DATABASE_URL` automatically. Use it for
+   `spring.datasource.url` by adding: `spring.datasource.url=${DATABASE_URL}`
+   or manually set `DB_URL` to the Railway Postgres connection string.
 
 3. **Root Directory:** `backend`
 

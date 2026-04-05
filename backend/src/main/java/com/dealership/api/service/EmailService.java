@@ -146,6 +146,41 @@ public class EmailService {
     }
 
     /**
+     * Send a financing application email to the dealer.
+     */
+    public void sendFinancingApplicationEmail(String toEmail, String name, String email,
+                                              String phone, String employment,
+                                              String monthlyIncome, String notes) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setReplyTo(email);
+            message.setSubject("💰 New Financing Application: " + name);
+
+            String body = String.format(
+                "FINANCING APPLICATION\n\n" +
+                "Name:              %s\n" +
+                "Email:             %s\n" +
+                "Phone:             %s\n" +
+                "Employment Status: %s\n" +
+                "Monthly Income:    %s\n\n" +
+                "Notes:\n%s",
+                name, email, phone != null ? phone : "(not provided)",
+                employment != null ? employment : "(not provided)",
+                monthlyIncome != null ? monthlyIncome : "(not provided)",
+                notes != null && !notes.isBlank() ? notes : "(none)"
+            );
+            message.setText(body);
+
+            mailSender.send(message);
+            logger.info("Financing application email sent for {}", email);
+        } catch (Exception e) {
+            logger.error("Failed to send financing application email", e);
+        }
+    }
+
+    /**
      * Send a test email (for OpenClaw configuration testing).
      * Simple email with custom to/subject/body.
      */

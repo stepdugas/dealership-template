@@ -148,6 +148,37 @@
         </div>
       </section>
 
+      <!-- FINANCING PAGE SETTINGS -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
+          Financing Page
+        </h2>
+        <p class="text-sm text-gray-500 mb-5 mt-3">
+          Shown on your Financing page. The blurb is your pitch to customers — tell them what makes your financing great.
+        </p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Your Financing Pitch</label>
+            <textarea
+              v-model="form.financing_blurb"
+              class="field resize-none"
+              rows="3"
+              placeholder="e.g. We work with over 10 local lenders to get you approved, regardless of credit history. Bad credit, no credit, first-time buyer — we have options for everyone."
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">External Application URL <span class="text-gray-400 font-normal">(optional)</span></label>
+            <input
+              v-model="form.financing_apply_url"
+              type="url"
+              class="field"
+              placeholder="https://your-lender.com/apply — leave blank to use the built-in application form"
+            />
+            <p class="text-xs text-gray-400 mt-1">If you have a link from your lender or a Google Form, paste it here. Otherwise customers will fill out a short form that gets emailed directly to you.</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ACTIVE PAGES -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
@@ -302,6 +333,9 @@ const form = reactive({
   instagram_url: '',
   notification_email: '',
   hero_image: 'sports',
+  // financing
+  financing_blurb: '',
+  financing_apply_url: '',
   // page toggles
   page_staff: false,
   page_financing: false,
@@ -322,7 +356,8 @@ onMounted(async () => {
     const s = res.data
     // Populate text fields
     const textFields = ['business_name','tagline','phone','email','address',
-                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image']
+                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'financing_blurb','financing_apply_url']
     textFields.forEach(k => { if (s[k]) form[k] = s[k] })
 
     // Populate page toggles
@@ -352,7 +387,8 @@ async function save() {
     // Build flat updates object for the backend
     const updates = {}
     const textFields = ['business_name','tagline','phone','email','address',
-                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image']
+                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'financing_blurb','financing_apply_url']
     textFields.forEach(k => { updates[k] = form[k] })
 
     // Page toggles

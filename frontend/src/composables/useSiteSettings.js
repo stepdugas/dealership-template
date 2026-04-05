@@ -61,6 +61,9 @@ export const siteSettings = reactive({
   notificationEmail: '',
   heroImage: 'sports',
   heroUrl: HERO_PRESETS[0].url,
+  // Financing page
+  financingBlurb:    '',
+  financingApplyUrl: '',
   // Page toggles — false by default, admin enables per client
   showStaff:           false,
   showFinancing:       false,
@@ -94,6 +97,10 @@ export async function fetchSiteSettings() {
       siteSettings.heroImage = s.hero_image
       siteSettings.heroUrl   = getHeroUrl(s.hero_image)
     }
+
+    // Financing
+    if (s.financing_blurb)     siteSettings.financingBlurb    = s.financing_blurb
+    if (s.financing_apply_url) siteSettings.financingApplyUrl = s.financing_apply_url
 
     // Page toggles
     siteSettings.showStaff           = s.page_staff            === 'true'

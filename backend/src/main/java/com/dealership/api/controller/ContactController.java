@@ -85,6 +85,29 @@ public class ContactController {
     }
 
     /**
+     * POST /api/financing-application — built-in financing application form (public)
+     * Emails the dealer's notification_email with the applicant's info.
+     */
+    @PostMapping("/api/financing-application")
+    public ResponseEntity<Map<String, String>> submitFinancingApplication(@RequestBody Map<String, String> body) {
+        String notificationEmail = configService.get("notification_email");
+        if (notificationEmail == null || notificationEmail.isBlank()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "Dealer notification email is not configured."));
+        }
+        emailService.sendFinancingApplicationEmail(
+            notificationEmail,
+            body.get("name"),
+            body.get("email"),
+            body.get("phone"),
+            body.get("employment"),
+            body.get("monthlyIncome"),
+            body.get("notes")
+        );
+        return ResponseEntity.ok(Map.of("message", "Application submitted successfully."));
+    }
+
+    /**
      * GET /api/admin/contacts — list all submissions (admin only)
      */
     @GetMapping("/api/admin/contacts")

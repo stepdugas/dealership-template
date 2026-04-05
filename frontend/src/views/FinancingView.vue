@@ -1,46 +1,48 @@
-<!--
-  FinancingView — Fully customizable financing page template.
-
-  Customization points are marked with [BRACKET] placeholders matching config.js
-  conventions. Replace static text in the sections below for each client.
--->
 <template>
   <PageLayout>
 
-    <!-- ── Hero banner ───────────────────────────────────────────────── -->
+    <!-- Hero -->
     <div class="bg-dark-800 pt-28 pb-14">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-4xl font-extrabold text-white" data-aos="fade-up">
-          <!-- [FINANCING_HEADLINE] -->
           Flexible Financing for Every Driver
         </h1>
-        <p class="text-gray-400 mt-3 max-w-2xl text-lg" data-aos="fade-up" data-aos-delay="100">
-          <!-- [FINANCING_SUBHEADLINE] -->
-          We work with top lenders to find the best rate for your situation —
-          all credit types welcome. Get pre-approved in minutes.
+        <p class="text-gray-300 mt-4 max-w-2xl text-lg leading-relaxed" data-aos="fade-up" data-aos-delay="100">
+          {{ siteSettings.financingBlurb || 'We work with lenders to find the best rate for your situation — all credit types welcome.' }}
         </p>
         <div class="mt-8 flex flex-wrap gap-4" data-aos="fade-up" data-aos-delay="200">
-          <a :href="'tel:' + PHONE" class="btn-primary text-base px-8 py-3">
-            Call to Apply — {{ PHONE }}
+          <a
+            v-if="siteSettings.financingApplyUrl"
+            :href="siteSettings.financingApplyUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary text-base px-8 py-3"
+          >
+            Apply Now
           </a>
-          <RouterLink to="/contact" class="btn-secondary text-base px-8 py-3">
-            Send Us a Message
-          </RouterLink>
+          <a v-else href="#apply" class="btn-primary text-base px-8 py-3">
+            Start Your Application
+          </a>
+          <a :href="'tel:' + siteSettings.phone" class="btn-secondary text-base px-8 py-3">
+            Call Us — {{ siteSettings.phone }}
+          </a>
         </div>
       </div>
     </div>
 
-    <!-- ── Why finance with us ────────────────────────────────────────── -->
+    <!-- Why finance with us -->
     <section class="py-16 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-10 text-center" data-aos="fade-up">
-          <!-- [WHY_FINANCE_HEADLINE] -->
           Why Finance With Us?
         </h2>
         <div class="grid md:grid-cols-3 gap-8">
-          <div v-for="benefit in benefits" :key="benefit.title"
-               class="text-center p-6 rounded-2xl border border-gray-100 shadow-sm"
-               data-aos="fade-up">
+          <div
+            v-for="benefit in benefits"
+            :key="benefit.title"
+            class="text-center p-6 rounded-2xl border border-gray-100 shadow-sm"
+            data-aos="fade-up"
+          >
             <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4">
               <component :is="benefit.icon" class="w-6 h-6 text-primary-600" />
             </div>
@@ -51,7 +53,7 @@
       </div>
     </section>
 
-    <!-- ── Loan calculator ───────────────────────────────────────────── -->
+    <!-- Payment calculator -->
     <section class="py-16 bg-gray-50">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2 text-center" data-aos="fade-up">
@@ -60,26 +62,22 @@
         <p class="text-gray-500 text-center mb-10 text-sm" data-aos="fade-up" data-aos-delay="50">
           Estimate your monthly payment. Actual rates depend on credit and lender approval.
         </p>
-
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8" data-aos="fade-up">
           <div class="grid sm:grid-cols-2 gap-6 mb-6">
             <div>
               <label class="form-label">Vehicle Price ($)</label>
-              <input v-model.number="calc.price" type="number" min="0" step="500"
-                     class="form-input" placeholder="25000" />
+              <input v-model.number="calc.price" type="number" min="0" step="500" class="form-input" placeholder="25000" />
             </div>
             <div>
               <label class="form-label">Down Payment ($)</label>
-              <input v-model.number="calc.down" type="number" min="0" step="500"
-                     class="form-input" placeholder="3000" />
+              <input v-model.number="calc.down" type="number" min="0" step="500" class="form-input" placeholder="3000" />
             </div>
             <div>
               <label class="form-label">Annual Interest Rate (%)</label>
-              <input v-model.number="calc.rate" type="number" min="0" max="30" step="0.1"
-                     class="form-input" placeholder="6.9" />
+              <input v-model.number="calc.rate" type="number" min="0" max="30" step="0.1" class="form-input" placeholder="6.9" />
             </div>
             <div>
-              <label class="form-label">Loan Term (months)</label>
+              <label class="form-label">Loan Term</label>
               <select v-model.number="calc.term" class="form-input">
                 <option :value="24">24 months (2 yr)</option>
                 <option :value="36">36 months (3 yr)</option>
@@ -90,19 +88,17 @@
               </select>
             </div>
           </div>
-
-          <!-- Result -->
           <div class="bg-primary-50 rounded-xl p-6 text-center border border-primary-100">
             <p class="text-sm text-gray-500 mb-1">Estimated Monthly Payment</p>
             <p class="text-4xl font-extrabold text-primary-700">
               {{ monthlyPayment !== null ? '$' + monthlyPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—' }}
             </p>
             <p class="text-xs text-gray-400 mt-2">
-              Total loan: {{ loanAmount > 0 ? '$' + loanAmount.toLocaleString() : '—' }} &nbsp;|&nbsp;
+              Loan amount: {{ loanAmount > 0 ? '$' + loanAmount.toLocaleString() : '—' }}
+              &nbsp;|&nbsp;
               Total paid: {{ totalPaid > 0 ? '$' + totalPaid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—' }}
             </p>
           </div>
-
           <p class="text-xs text-gray-400 mt-4 text-center">
             This calculator is for estimation purposes only. Taxes, fees, and final rates vary.
           </p>
@@ -110,91 +106,114 @@
       </div>
     </section>
 
-    <!-- ── Financing partners / lenders ─────────────────────────────── -->
+    <!-- Understanding your loan (FAQ) -->
     <section class="py-16 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-3 text-center" data-aos="fade-up">
-          <!-- [LENDERS_HEADLINE] -->
-          Our Lending Partners
-        </h2>
-        <p class="text-gray-500 text-center mb-10 max-w-xl mx-auto text-sm" data-aos="fade-up" data-aos-delay="50">
-          <!-- [LENDERS_SUBTEXT] -->
-          We partner with a network of local and national lenders to secure competitive
-          rates for buyers at every credit level.
-        </p>
-
-        <!-- [LENDERS_GRID] Replace these placeholder cards with actual lender logos/names -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="lender in lenders" :key="lender.name"
-               class="border border-gray-100 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow"
-               data-aos="fade-up">
-            <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-              </svg>
-            </div>
-            <h3 class="font-semibold text-gray-900 text-sm">{{ lender.name }}</h3>
-            <p class="text-xs text-gray-400 mt-1">{{ lender.note }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Loan terms explained ──────────────────────────────────────── -->
-    <section class="py-16 bg-gray-50">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-10 text-center" data-aos="fade-up">
           Understanding Your Loan
         </h2>
         <div class="space-y-4">
-          <details v-for="term in loanTerms" :key="term.term"
-                   class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-                   data-aos="fade-up">
-            <summary class="cursor-pointer px-6 py-4 font-semibold text-gray-900 flex items-center justify-between select-none hover:bg-gray-50 transition-colors">
-              {{ term.term }}
+          <details
+            v-for="item in loanTerms"
+            :key="item.term"
+            class="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden"
+            data-aos="fade-up"
+          >
+            <summary class="cursor-pointer px-6 py-4 font-semibold text-gray-900 flex items-center justify-between select-none hover:bg-gray-100 transition-colors">
+              {{ item.term }}
               <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
             </summary>
-            <div class="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
-              {{ term.explanation }}
+            <div class="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-200 pt-4">
+              {{ item.explanation }}
             </div>
           </details>
         </div>
       </div>
     </section>
 
-    <!-- ── Application links / CTA ───────────────────────────────────── -->
-    <section class="py-16 bg-dark-800">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-aos="fade-up">
-        <h2 class="text-3xl font-extrabold text-white mb-4">
-          <!-- [CTA_HEADLINE] -->
-          Ready to Get Behind the Wheel?
-        </h2>
-        <p class="text-gray-400 mb-10 max-w-xl mx-auto">
-          <!-- [CTA_SUBTEXT] -->
-          Call us or stop by. Our finance team will walk you through every option and
-          get you approved quickly — no pressure, no hidden fees.
-        </p>
+    <!-- Apply section — external link OR built-in form -->
+    <section id="apply" class="py-16 bg-gray-50">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- [APPLICATION_LINKS] Add or replace these with actual application form URLs -->
-        <div class="grid sm:grid-cols-3 gap-4 mb-10">
-          <div v-for="action in ctaActions" :key="action.label"
-               class="bg-dark-700 rounded-2xl p-6 border border-white/10">
-            <p class="text-white font-semibold mb-1">{{ action.label }}</p>
-            <p class="text-gray-400 text-sm">{{ action.detail }}</p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap justify-center gap-4">
-          <RouterLink to="/contact" class="btn-primary text-base px-10 py-4">
-            Apply Online
-          </RouterLink>
-          <a :href="'tel:' + PHONE" class="btn-secondary text-base px-10 py-4">
-            Call {{ PHONE }}
+        <!-- External link CTA -->
+        <div v-if="siteSettings.financingApplyUrl" class="text-center" data-aos="fade-up">
+          <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Ready to Apply?</h2>
+          <p class="text-gray-500 mb-8">Click below to start your application. It only takes a few minutes.</p>
+          <a
+            :href="siteSettings.financingApplyUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary text-base px-10 py-4"
+          >
+            Start Your Application
           </a>
         </div>
+
+        <!-- Built-in application form -->
+        <div v-else data-aos="fade-up">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2 text-center">Start Your Application</h2>
+          <p class="text-gray-500 text-center mb-8 text-sm">Fill out the short form below and we'll be in touch to discuss your options.</p>
+
+          <div v-if="submitSuccess" class="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
+            <p class="text-2xl mb-2">✓</p>
+            <p class="font-semibold text-green-800">Application Received!</p>
+            <p class="text-green-700 text-sm mt-1">We'll reach out to you shortly to go over your options.</p>
+          </div>
+
+          <form v-else @submit.prevent="submitApplication" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5">
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div class="sm:col-span-2">
+                <label class="form-label">Full Name *</label>
+                <input v-model="appForm.name" type="text" class="form-input" placeholder="Jane Smith" required />
+              </div>
+              <div>
+                <label class="form-label">Email *</label>
+                <input v-model="appForm.email" type="email" class="form-input" placeholder="jane@email.com" required />
+              </div>
+              <div>
+                <label class="form-label">Phone</label>
+                <input v-model="appForm.phone" type="tel" class="form-input" placeholder="(555) 123-4567" />
+              </div>
+              <div>
+                <label class="form-label">Employment Status</label>
+                <select v-model="appForm.employment" class="form-input">
+                  <option value="">Select…</option>
+                  <option>Employed Full-Time</option>
+                  <option>Employed Part-Time</option>
+                  <option>Self-Employed</option>
+                  <option>Retired</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Approximate Monthly Income</label>
+                <select v-model="appForm.monthlyIncome" class="form-input">
+                  <option value="">Prefer not to say</option>
+                  <option>Under $1,500</option>
+                  <option>$1,500 – $2,500</option>
+                  <option>$2,500 – $4,000</option>
+                  <option>$4,000 – $6,000</option>
+                  <option>Over $6,000</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="form-label">Additional Notes <span class="text-gray-400 font-normal">(optional)</span></label>
+                <textarea v-model="appForm.notes" class="form-input resize-none" rows="3"
+                  placeholder="Any details about the vehicle you're interested in, trade-in, credit situation, etc."></textarea>
+              </div>
+            </div>
+            <p v-if="submitError" class="text-red-500 text-sm">{{ submitError }}</p>
+            <button type="submit" :disabled="submitting" class="btn-primary w-full py-3">
+              {{ submitting ? 'Submitting…' : 'Submit Application' }}
+            </button>
+            <p class="text-xs text-gray-400 text-center">
+              This is not a credit check. We'll contact you to discuss next steps.
+            </p>
+          </form>
+        </div>
+
       </div>
     </section>
 
@@ -203,11 +222,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import axios from 'axios'
 import PageLayout from '../components/layout/PageLayout.vue'
-import { PHONE } from '../config'
+import { siteSettings } from '../composables/useSiteSettings'
+import { API_BASE_URL } from '../config'
 
-// ── Rate calculator state ────────────────────────────────────────────────
+// ── Payment calculator ───────────────────────────────────────────────────
 const calc = ref({ price: 25000, down: 3000, rate: 6.9, term: 60 })
 
 const loanAmount = computed(() => Math.max(0, (calc.value.price || 0) - (calc.value.down || 0)))
@@ -225,40 +245,48 @@ const totalPaid = computed(() =>
   monthlyPayment.value > 0 ? monthlyPayment.value * calc.value.term : 0
 )
 
-// ── Static content (customize per client) ───────────────────────────────
+// ── Built-in application form ────────────────────────────────────────────
+const appForm = ref({ name: '', email: '', phone: '', employment: '', monthlyIncome: '', notes: '' })
+const submitting   = ref(false)
+const submitSuccess = ref(false)
+const submitError   = ref('')
 
-// [BENEFITS] — customize titles and descriptions for each client
+async function submitApplication() {
+  submitting.value  = true
+  submitError.value = ''
+  try {
+    await axios.post(`${API_BASE_URL}/api/financing-application`, appForm.value)
+    submitSuccess.value = true
+  } catch {
+    submitError.value = 'Failed to submit. Please call us directly or try again.'
+  } finally {
+    submitting.value = false
+  }
+}
+
+// ── Static content ───────────────────────────────────────────────────────
 const benefits = [
   {
     title: 'All Credit Situations',
-    description: 'First-time buyer, rebuilding credit, or excellent score — we have lenders for every situation.',
+    description: 'First-time buyer, rebuilding credit, or excellent score — we have options for every situation.',
     icon: CheckIcon,
   },
   {
     title: 'Quick Pre-Approval',
-    description: 'Get a decision in minutes. No long waits or confusing paperwork.',
+    description: 'Get a decision fast. No long waits or confusing paperwork.',
     icon: ClockIcon,
   },
   {
     title: 'Competitive Rates',
-    description: 'We shop multiple lenders on your behalf to find the lowest rate available.',
+    description: 'We work with lenders on your behalf to find the lowest rate available.',
     icon: DollarIcon,
   },
 ]
 
-// [LENDERS] — replace with real lender names or remove cards you don't use
-const lenders = [
-  { name: '[Lender Name 1]',  note: 'National bank partner' },
-  { name: '[Lender Name 2]',  note: 'Credit union partner' },
-  { name: '[Lender Name 3]',  note: 'Finance company' },
-  { name: '[Lender Name 4]',  note: 'In-house financing' },
-]
-
-// [LOAN_TERMS] — educational content; customize or add more as needed
 const loanTerms = [
   {
     term: 'APR (Annual Percentage Rate)',
-    explanation: 'APR is the yearly cost of borrowing, including interest and fees, expressed as a percentage. A lower APR means you pay less over the life of the loan.',
+    explanation: 'APR is the yearly cost of borrowing, including interest and fees. A lower APR means you pay less over the life of the loan.',
   },
   {
     term: 'Down Payment',
@@ -270,22 +298,14 @@ const loanTerms = [
   },
   {
     term: 'Credit Score Impact',
-    explanation: 'Your credit score is one of the biggest factors in your rate. Scores above 700 generally qualify for the best rates. We also work with buyers rebuilding credit.',
+    explanation: 'Your credit score is one of the biggest factors in your rate. Scores above 700 typically qualify for the best rates. We also work with buyers rebuilding credit.',
   },
   {
     term: 'Pre-Approval vs. Pre-Qualification',
-    explanation: 'Pre-qualification is a quick estimate based on self-reported info. Pre-approval involves a credit check and gives you a firmer commitment from a lender.',
+    explanation: 'Pre-qualification is a quick estimate. Pre-approval involves a credit check and gives you a firmer commitment from a lender — stronger when shopping for a car.',
   },
 ]
 
-// [CTA_ACTIONS] — update with your dealership's specifics
-const ctaActions = [
-  { label: 'Call or Text', detail: PHONE },
-  { label: 'Visit Us', detail: 'No appointment needed' },
-  { label: 'Apply Online', detail: 'Takes about 5 minutes' },
-]
-
-// ── Inline icon components (avoids external icon dependency) ────────────
 const CheckIcon = {
   template: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
 }

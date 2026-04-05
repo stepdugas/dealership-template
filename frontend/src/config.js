@@ -40,6 +40,6 @@ export const PRIMARY_COLOR = '#6172f0'
 // Backend API base URL — update for production
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Cloudinary config — update with client credentials
-export const CLOUDINARY_CLOUD_NAME = '[CLOUDINARY_CLOUD_NAME]'
-export const CLOUDINARY_UPLOAD_PRESET = '[CLOUDINARY_UPLOAD_PRESET]'
+// Cloudinary config — set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in Netlify env vars
+export const CLOUDINARY_CLOUD_NAME    = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME    || '[CLOUDINARY_CLOUD_NAME]'
+export const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '[CLOUDINARY_UPLOAD_PRESET]'

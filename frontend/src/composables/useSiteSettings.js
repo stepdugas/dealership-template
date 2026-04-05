@@ -64,6 +64,12 @@ export const siteSettings = reactive({
   // Financing page
   financingBlurb:    '',
   financingApplyUrl: '',
+  // Schedule Service page
+  scheduleServiceBlurb:      '',
+  scheduleCalendarUrl:       '',
+  scheduleShowVehicleInfo:   true,
+  scheduleShowPreferredTime: true,
+  scheduleShowReferral:      false,
   // Page toggles — false by default, admin enables per client
   showStaff:           false,
   showFinancing:       false,
@@ -101,6 +107,13 @@ export async function fetchSiteSettings() {
     // Financing
     if (s.financing_blurb)     siteSettings.financingBlurb    = s.financing_blurb
     if (s.financing_apply_url) siteSettings.financingApplyUrl = s.financing_apply_url
+
+    // Schedule Service
+    if (s.schedule_service_blurb)    siteSettings.scheduleServiceBlurb    = s.schedule_service_blurb
+    if (s.schedule_calendar_url)     siteSettings.scheduleCalendarUrl     = s.schedule_calendar_url
+    siteSettings.scheduleShowVehicleInfo   = s.schedule_show_vehicle_info   !== 'false'
+    siteSettings.scheduleShowPreferredTime = s.schedule_show_preferred_time !== 'false'
+    siteSettings.scheduleShowReferral      = s.schedule_show_referral       === 'true'
 
     // Page toggles
     siteSettings.showStaff           = s.page_staff            === 'true'

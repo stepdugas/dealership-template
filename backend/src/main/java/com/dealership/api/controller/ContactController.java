@@ -108,6 +108,20 @@ public class ContactController {
     }
 
     /**
+     * POST /api/schedule-service — service appointment request (public)
+     */
+    @PostMapping("/api/schedule-service")
+    public ResponseEntity<Map<String, String>> scheduleService(@RequestBody Map<String, String> body) {
+        String notificationEmail = configService.get("notification_email");
+        if (notificationEmail == null || notificationEmail.isBlank()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "Dealer notification email is not configured."));
+        }
+        emailService.sendServiceAppointmentEmail(notificationEmail, body);
+        return ResponseEntity.ok(Map.of("message", "Appointment request submitted successfully."));
+    }
+
+    /**
      * GET /api/admin/contacts — list all submissions (admin only)
      */
     @GetMapping("/api/admin/contacts")

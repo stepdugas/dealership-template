@@ -179,6 +179,63 @@
         </div>
       </section>
 
+      <!-- SCHEDULE SERVICE SETTINGS -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
+          Schedule Service Page
+        </h2>
+        <p class="text-sm text-gray-500 mb-5 mt-3">
+          Configure your service scheduling page. Paste a calendar link if you use Calendly, Cal.com, Google Calendar booking, or similar — otherwise customers will fill out a built-in request form.
+        </p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Intro Text</label>
+            <textarea
+              v-model="form.schedule_service_blurb"
+              class="field resize-none"
+              rows="2"
+              placeholder="e.g. Our service team is ready to help. Book an appointment below or give us a call."
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Calendar Booking URL <span class="text-gray-400 font-normal">(optional)</span></label>
+            <input
+              v-model="form.schedule_calendar_url"
+              type="url"
+              class="field"
+              placeholder="https://calendly.com/your-dealership — leave blank to use the built-in request form"
+            />
+            <p class="text-xs text-gray-400 mt-1">Works with Calendly, Cal.com, Google Calendar booking, Acuity, Square Appointments, or any bookable link.</p>
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <p class="text-sm font-medium text-gray-700 mb-3">Built-in Form Sections <span class="text-gray-400 font-normal">(shown when no calendar URL is set)</span></p>
+            <div class="space-y-3">
+              <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                <div>
+                  <p class="text-sm font-medium text-gray-800">Vehicle Information</p>
+                  <p class="text-xs text-gray-500">Year, make, model, mileage, VIN</p>
+                </div>
+                <input v-model="form.schedule_show_vehicle_info" type="checkbox" class="w-4 h-4 accent-blue-600 cursor-pointer ml-4" />
+              </label>
+              <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                <div>
+                  <p class="text-sm font-medium text-gray-800">Appointment Preference</p>
+                  <p class="text-xs text-gray-500">Preferred date and time of day</p>
+                </div>
+                <input v-model="form.schedule_show_preferred_time" type="checkbox" class="w-4 h-4 accent-blue-600 cursor-pointer ml-4" />
+              </label>
+              <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                <div>
+                  <p class="text-sm font-medium text-gray-800">"How did you hear about us?"</p>
+                  <p class="text-xs text-gray-500">Optional referral source question</p>
+                </div>
+                <input v-model="form.schedule_show_referral" type="checkbox" class="w-4 h-4 accent-blue-600 cursor-pointer ml-4" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ACTIVE PAGES -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
@@ -336,6 +393,12 @@ const form = reactive({
   // financing
   financing_blurb: '',
   financing_apply_url: '',
+  // schedule service
+  schedule_service_blurb: '',
+  schedule_calendar_url: '',
+  schedule_show_vehicle_info: true,
+  schedule_show_preferred_time: true,
+  schedule_show_referral: false,
   // page toggles
   page_staff: false,
   page_financing: false,
@@ -357,8 +420,14 @@ onMounted(async () => {
     // Populate text fields
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
-                        'financing_blurb','financing_apply_url']
+                        'financing_blurb','financing_apply_url',
+                        'schedule_service_blurb','schedule_calendar_url']
     textFields.forEach(k => { if (s[k]) form[k] = s[k] })
+
+    // Populate schedule service toggles
+    if (s.schedule_show_vehicle_info   !== undefined) form.schedule_show_vehicle_info   = s.schedule_show_vehicle_info   !== 'false'
+    if (s.schedule_show_preferred_time !== undefined) form.schedule_show_preferred_time = s.schedule_show_preferred_time !== 'false'
+    if (s.schedule_show_referral       !== undefined) form.schedule_show_referral       = s.schedule_show_referral       === 'true'
 
     // Populate page toggles
     if (s.page_staff            !== undefined) form.page_staff            = s.page_staff            === 'true'
@@ -388,8 +457,14 @@ async function save() {
     const updates = {}
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
-                        'financing_blurb','financing_apply_url']
+                        'financing_blurb','financing_apply_url',
+                        'schedule_service_blurb','schedule_calendar_url']
     textFields.forEach(k => { updates[k] = form[k] })
+
+    // Schedule service toggles
+    updates.schedule_show_vehicle_info   = String(form.schedule_show_vehicle_info)
+    updates.schedule_show_preferred_time = String(form.schedule_show_preferred_time)
+    updates.schedule_show_referral       = String(form.schedule_show_referral)
 
     // Page toggles
     updates.page_staff            = String(form.page_staff)

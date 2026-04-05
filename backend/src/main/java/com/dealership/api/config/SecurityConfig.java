@@ -61,6 +61,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/public/staff").permitAll()
                 // Public financing application form
                 .requestMatchers(HttpMethod.POST, "/api/financing-application").permitAll()
+                // Public service appointment request
+                .requestMatchers(HttpMethod.POST, "/api/schedule-service").permitAll()
                 // Public email test endpoint (for OpenClaw)
                 .requestMatchers(HttpMethod.POST, "/api/email/test").permitAll()
                 // Admin login — public

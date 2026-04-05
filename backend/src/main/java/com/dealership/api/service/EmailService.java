@@ -181,6 +181,58 @@ public class EmailService {
     }
 
     /**
+     * Send a service appointment request email to the dealer.
+     */
+    public void sendServiceAppointmentEmail(String toEmail, Map<String, String> fields) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            String replyTo = fields.get("email");
+            if (replyTo != null && !replyTo.isBlank()) message.setReplyTo(replyTo);
+            message.setSubject("🔧 New Service Appointment Request: " + fields.getOrDefault("name", "Unknown"));
+
+            StringBuilder body = new StringBuilder("SERVICE APPOINTMENT REQUEST\n\n");
+            body.append("CUSTOMER\n--------\n");
+            body.append("Name:    ").append(fields.getOrDefault("name", "")).append("\n");
+            body.append("Email:   ").append(fields.getOrDefault("email", "")).append("\n");
+            body.append("Phone:   ").append(fields.getOrDefault("phone", "(not provided)")).append("\n\n");
+            body.append("SERVICE\n-------\n");
+            body.append("Type:    ").append(fields.getOrDefault("serviceType", "")).append("\n");
+            if (fields.containsKey("description") && !fields.get("description").isBlank())
+                body.append("Notes:   ").append(fields.get("description")).append("\n");
+            body.append("\n");
+            if (fields.containsKey("vehicleYear") || fields.containsKey("vehicleMake")) {
+                body.append("VEHICLE\n-------\n");
+                body.append("Year:    ").append(fields.getOrDefault("vehicleYear", "")).append("\n");
+                body.append("Make:    ").append(fields.getOrDefault("vehicleMake", "")).append("\n");
+                body.append("Model:   ").append(fields.getOrDefault("vehicleModel", "")).append("\n");
+                if (fields.containsKey("vehicleMileage") && !fields.get("vehicleMileage").isBlank())
+                    body.append("Mileage: ").append(fields.get("vehicleMileage")).append("\n");
+                if (fields.containsKey("vehicleVin") && !fields.get("vehicleVin").isBlank())
+                    body.append("VIN:     ").append(fields.get("vehicleVin")).append("\n");
+                body.append("\n");
+            }
+            if (fields.containsKey("preferredDate") || fields.containsKey("preferredTime")) {
+                body.append("APPOINTMENT PREFERENCE\n----------------------\n");
+                if (fields.containsKey("preferredDate") && !fields.get("preferredDate").isBlank())
+                    body.append("Date:    ").append(fields.get("preferredDate")).append("\n");
+                if (fields.containsKey("preferredTime") && !fields.get("preferredTime").isBlank())
+                    body.append("Time:    ").append(fields.get("preferredTime")).append("\n");
+                body.append("\n");
+            }
+            if (fields.containsKey("referralSource") && !fields.get("referralSource").isBlank())
+                body.append("How they heard about us: ").append(fields.get("referralSource")).append("\n");
+
+            message.setText(body.toString());
+            mailSender.send(message);
+            logger.info("Service appointment email sent for {}", fields.get("email"));
+        } catch (Exception e) {
+            logger.error("Failed to send service appointment email", e);
+        }
+    }
+
+    /**
      * Send a test email (for OpenClaw configuration testing).
      * Simple email with custom to/subject/body.
      */

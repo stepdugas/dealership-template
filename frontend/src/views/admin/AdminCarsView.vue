@@ -34,14 +34,14 @@
     <div v-else-if="cars.length" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+          <thead class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500 border-b border-gray-100">
             <tr>
+              <th class="text-left px-5 py-3 w-12"></th>
               <th class="text-left px-5 py-3">Vehicle</th>
-              <th class="text-left px-5 py-3">Year</th>
               <th class="text-left px-5 py-3">Price</th>
               <th class="text-left px-5 py-3">Mileage</th>
               <th class="text-left px-5 py-3">Status</th>
-              <th class="text-left px-5 py-3">VIN</th>
+              <th class="text-left px-5 py-3 hidden lg:table-cell">VIN</th>
               <th class="px-5 py-3"></th>
             </tr>
           </thead>
@@ -49,12 +49,29 @@
             <tr
               v-for="car in cars"
               :key="car.id"
-              class="hover:bg-gray-50 transition-colors"
+              class="hover:bg-gray-50 transition-colors group"
             >
-              <td class="px-5 py-3 font-medium text-gray-900">
-                {{ car.make }} {{ car.model }}
+              <!-- Thumbnail -->
+              <td class="px-4 py-3">
+                <div class="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                  <img
+                    v-if="car.primaryImageUrl"
+                    :src="car.primaryImageUrl"
+                    :alt="`${car.make} ${car.model}`"
+                    class="w-full h-full object-cover"
+                  />
+                  <div v-else class="w-full h-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 1h8zM13 16l2 1h4l2-1v-5l-3.5-5.5H13v5z"/>
+                    </svg>
+                  </div>
+                </div>
               </td>
-              <td class="px-5 py-3 text-gray-500">{{ car.year }}</td>
+              <td class="px-5 py-3">
+                <p class="font-semibold text-gray-900">{{ car.year }} {{ car.make }} {{ car.model }}</p>
+                <p v-if="car.trim" class="text-xs text-gray-400 mt-0.5">{{ car.trim }}</p>
+              </td>
               <td class="px-5 py-3 text-gray-900 font-semibold">{{ formatPrice(car.price) }}</td>
               <td class="px-5 py-3 text-gray-500">{{ car.mileage ? Number(car.mileage).toLocaleString() + ' mi' : '—' }}</td>
               <td class="px-5 py-3">
@@ -69,9 +86,19 @@
                   {{ car.status ?? 'available' }}
                 </span>
               </td>
-              <td class="px-5 py-3 text-gray-400 font-mono text-xs">{{ car.vin || '—' }}</td>
+              <td class="px-5 py-3 text-gray-400 font-mono text-xs hidden lg:table-cell">{{ car.vin || '—' }}</td>
               <td class="px-5 py-3">
                 <div class="flex items-center gap-3 justify-end">
+                  <RouterLink
+                    :to="`/inventory/${car.id}`"
+                    target="_blank"
+                    class="text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Preview listing"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                  </RouterLink>
                   <RouterLink
                     :to="`/admin/cars/${car.id}/edit`"
                     class="text-primary-600 hover:text-primary-800 font-medium text-xs"

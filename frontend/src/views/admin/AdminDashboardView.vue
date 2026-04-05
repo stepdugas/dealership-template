@@ -66,7 +66,11 @@
 
       <!-- Page content -->
       <main class="flex-1 p-6 overflow-auto">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <Transition name="admin-fade" mode="out-in">
+            <component :is="Component" :key="$route.path" />
+          </Transition>
+        </RouterView>
       </main>
     </div>
   </div>
@@ -74,8 +78,10 @@
 
 <script setup>
 import { ref, h } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import { siteSettings } from '../../composables/useSiteSettings'
+
+const route = useRoute()
 
 const router     = useRouter()
 const sidebarOpen = ref(false)
@@ -122,3 +128,18 @@ function signOut() {
   router.push({ name: 'AdminLogin' })
 }
 </script>
+
+<style scoped>
+.admin-fade-enter-active,
+.admin-fade-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.admin-fade-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.admin-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+</style>

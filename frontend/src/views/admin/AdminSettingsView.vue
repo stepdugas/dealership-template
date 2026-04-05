@@ -62,6 +62,38 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
             <input v-model="form.instagram_url" type="url" class="field" placeholder="https://instagram.com/yourpage" />
           </div>
+
+          <!-- Logo -->
+          <div class="md:col-span-2 border-t border-gray-100 pt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Logo URL <span class="text-gray-400 font-normal">(optional — shown in header & footer)</span></label>
+            <div class="flex gap-3 items-start">
+              <input v-model="form.logo_url" type="url" class="field flex-1" placeholder="https://res.cloudinary.com/... or any image URL" />
+              <button
+                type="button"
+                @click="$refs.logoFileInput.click()"
+                :disabled="logoUploading"
+                class="px-4 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:bg-gray-50 whitespace-nowrap disabled:opacity-50"
+              >
+                {{ logoUploading ? 'Uploading…' : 'Upload Image' }}
+              </button>
+              <input ref="logoFileInput" type="file" accept="image/*" class="hidden" @change="uploadLogo" />
+            </div>
+            <div v-if="form.logo_url" class="mt-3 flex items-center gap-3">
+              <img :src="form.logo_url" alt="Logo preview" class="h-12 w-auto rounded border border-gray-200 bg-gray-50 p-1" @error="logoPreviewError = true" />
+              <span v-if="!logoPreviewError" class="text-xs text-gray-400">Preview</span>
+              <span v-else class="text-xs text-red-500">Image failed to load — check the URL</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Paste a URL or upload via Cloudinary. If left blank, the dealership name is shown as text instead.</p>
+          </div>
+
+          <!-- Google Maps embed URL -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Google Maps Embed URL <span class="text-gray-400 font-normal">(optional — shows a map on the Contact page)</span></label>
+            <input v-model="form.google_maps_embed_url" type="url" class="field" placeholder="https://www.google.com/maps/embed?pb=..." />
+            <p class="text-xs text-gray-400 mt-1">
+              Get this from Google Maps → Share → Embed a map → copy only the <em>src="…"</em> value.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -125,7 +157,7 @@
         <p class="text-sm text-gray-500 mb-5 mt-3">
           Pick the vibe that fits your dealership best. This is the big image customers see first.
         </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
           <div
             v-for="preset in HERO_PRESETS"
             :key="preset.key"
@@ -145,6 +177,19 @@
               ✓
             </div>
           </div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Custom Background URL <span class="text-gray-400 font-normal">(optional — overrides the preset selection above)</span>
+          </label>
+          <input
+            v-model="customHeroUrl"
+            @input="form.hero_image = customHeroUrl || 'sports'"
+            type="url"
+            class="field"
+            placeholder="https://your-image-url.com/photo.jpg — paste any photo URL to use instead"
+          />
+          <p class="text-xs text-gray-400 mt-1">Paste a Cloudinary URL, Unsplash link, or any direct image URL. Leave blank to use the preset selection.</p>
         </div>
       </section>
 
@@ -420,9 +465,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import { adminGetSettings, adminUpdateSettings, adminChangePassword, adminChangeManagerPassword } from '../../api/index'
 import { HERO_PRESETS, fetchSiteSettings } from '../../composables/useSiteSettings'
+import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../../config'
 
-const loading  = ref(true)
-const saving   = ref(false)
+const loading       = ref(true)
+const saving        = ref(false)
+const customHeroUrl = ref('')
 const successMsg = ref('')
 const errorMsg   = ref('')
 
@@ -446,6 +493,8 @@ const form = reactive({
   facebook_url: '',
   instagram_url: '',
   notification_email: '',
+  logo_url: '',
+  google_maps_embed_url: '',
   hero_image: 'sports',
   // about us
   about_blurb: '',
@@ -484,12 +533,15 @@ onMounted(async () => {
     const s = res.data
     // Populate text fields
     const textFields = ['business_name','tagline','phone','email','address',
-                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'city_state_zip','facebook_url','instagram_url','notification_email',
+                        'logo_url','google_maps_embed_url','hero_image',
                         'about_blurb','about_mission','about_year_founded',
                         'about_stat_years','about_stat_vehicles','about_stat_reviews','about_stat_team',
                         'financing_blurb','financing_apply_url',
                         'schedule_service_blurb','schedule_calendar_url']
     textFields.forEach(k => { if (s[k]) form[k] = s[k] })
+    // If hero_image is a URL (custom), populate the custom field
+    if (s.hero_image && s.hero_image.startsWith('http')) customHeroUrl.value = s.hero_image
 
     // Populate schedule service toggles
     if (s.schedule_show_vehicle_info   !== undefined) form.schedule_show_vehicle_info   = s.schedule_show_vehicle_info   !== 'false'
@@ -523,7 +575,8 @@ async function save() {
     // Build flat updates object for the backend
     const updates = {}
     const textFields = ['business_name','tagline','phone','email','address',
-                        'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'city_state_zip','facebook_url','instagram_url','notification_email',
+                        'logo_url','google_maps_embed_url','hero_image',
                         'about_blurb','about_mission','about_year_founded',
                         'about_stat_years','about_stat_vehicles','about_stat_reviews','about_stat_team',
                         'financing_blurb','financing_apply_url',
@@ -563,6 +616,32 @@ async function save() {
     errorMsg.value = 'Failed to save. Make sure the backend is running and try again.'
   } finally {
     saving.value = false
+  }
+}
+
+// ── Logo upload ──────────────────────────────────────────────────────────
+const logoUploading  = ref(false)
+const logoPreviewError = ref(false)
+
+async function uploadLogo(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  logoUploading.value = true
+  logoPreviewError.value = false
+  try {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    const res  = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      { method: 'POST', body: fd }
+    )
+    const data = await res.json()
+    form.logo_url = data.secure_url
+  } catch {
+    // silently fail — user can paste URL manually
+  } finally {
+    logoUploading.value = false
   }
 }
 

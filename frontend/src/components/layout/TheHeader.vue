@@ -9,17 +9,13 @@
         <!-- Logo / Dealership Name -->
         <RouterLink to="/" class="flex items-center gap-3 flex-shrink-0">
           <img
-            v-if="LOGO_URL && !LOGO_URL.startsWith('[')"
-            :src="LOGO_URL"
-            :alt="DEALERSHIP_NAME + ' logo'"
+            v-if="siteSettings.logoUrl"
+            :src="siteSettings.logoUrl"
+            :alt="siteSettings.businessName + ' logo'"
             class="h-10 w-auto"
           />
-          <span
-            v-else
-            class="text-white font-bold text-xl tracking-tight"
-          >
-            <!-- [LOGO] placeholder — replace LOGO_URL in config.js -->
-            {{ DEALERSHIP_NAME }}
+          <span v-else class="text-white font-bold text-xl tracking-tight">
+            {{ siteSettings.businessName }}
           </span>
         </RouterLink>
 
@@ -92,7 +88,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { DEALERSHIP_NAME, LOGO_URL } from '../../config'
+import { DEALERSHIP_NAME } from '../../config'
 import { siteSettings } from '../../composables/useSiteSettings'
 
 const scrolled = ref(false)

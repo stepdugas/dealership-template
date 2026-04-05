@@ -114,6 +114,9 @@ export const adminGetSettings = () => api.get('/api/manager/settings')
 /** Bulk-update dealership config settings (admin). */
 export const adminUpdateSettings = (updates) => api.put('/api/manager/settings', updates)
 
+/** Admin dashboard stats — inventory counts + recent contacts. */
+export const adminGetDashboard = () => api.get('/api/admin/dashboard')
+
 // ── Admin auth endpoint ─────────────────────────────────────────────────
 
 /**

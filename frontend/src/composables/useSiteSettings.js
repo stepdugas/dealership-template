@@ -37,12 +37,38 @@ export const HERO_PRESETS = [
   },
   {
     key: 'lot',
-    label: 'Classic Dealership',
+    label: 'Classic Dealership Lot',
     url: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=1920&q=80',
+  },
+  {
+    key: 'family',
+    label: 'Family & Economy',
+    url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1920&q=80',
+  },
+  {
+    key: 'showroom',
+    label: 'Indoor Showroom',
+    url: 'https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=1920&q=80',
+  },
+  {
+    key: 'night',
+    label: 'Nighttime Lot',
+    url: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=1920&q=80',
+  },
+  {
+    key: 'road',
+    label: 'Open Road',
+    url: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1920&q=80',
+  },
+  {
+    key: 'electric',
+    label: 'Electric & Modern',
+    url: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1920&q=80',
   },
 ]
 
 function getHeroUrl(key) {
+  if (key && key.startsWith('http')) return key  // custom URL
   const preset = HERO_PRESETS.find((p) => p.key === key)
   return preset ? preset.url : HERO_PRESETS[0].url
 }
@@ -59,6 +85,8 @@ export const siteSettings = reactive({
   instagramUrl: INSTAGRAM_URL,
   hours: { ...HOURS },
   notificationEmail: '',
+  logoUrl: '',
+  googleMapsEmbedUrl: '',
   heroImage: 'sports',
   heroUrl: HERO_PRESETS[0].url,
   // About Us page
@@ -99,6 +127,8 @@ export async function fetchSiteSettings() {
     if (s.facebook_url)   siteSettings.facebookUrl    = s.facebook_url
     if (s.instagram_url)  siteSettings.instagramUrl   = s.instagram_url
     if (s.notification_email) siteSettings.notificationEmail = s.notification_email
+    if (s.logo_url)           siteSettings.logoUrl           = s.logo_url
+    if (s.google_maps_embed_url) siteSettings.googleMapsEmbedUrl = s.google_maps_embed_url
 
     // Hours
     const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
@@ -106,7 +136,7 @@ export async function fetchSiteSettings() {
       if (s[`hours_${day}`]) siteSettings.hours[day] = s[`hours_${day}`]
     })
 
-    // Hero image
+    // Hero image (preset key or custom URL)
     if (s.hero_image) {
       siteSettings.heroImage = s.hero_image
       siteSettings.heroUrl   = getHeroUrl(s.hero_image)

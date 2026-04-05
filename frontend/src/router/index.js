@@ -76,8 +76,14 @@ const routes = [
     name: 'AdminDashboard',
     component: () => import('../views/admin/AdminDashboardView.vue'),
     meta: { title: 'Admin Dashboard', requiresAdmin: true },
-    redirect: '/admin/cars',
+    redirect: '/admin/home',
     children: [
+      {
+        path: 'home',
+        name: 'AdminHome',
+        component: () => import('../views/admin/AdminHomeView.vue'),
+        meta: { title: 'Dashboard', requiresAdmin: true },
+      },
       {
         path: 'cars',
         name: 'AdminCars',

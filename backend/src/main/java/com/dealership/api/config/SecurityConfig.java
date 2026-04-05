@@ -65,6 +65,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/schedule-service").permitAll()
                 // Public email test endpoint (for OpenClaw)
                 .requestMatchers(HttpMethod.POST, "/api/email/test").permitAll()
+                // Admin dashboard stats
+                .requestMatchers(HttpMethod.GET, "/api/admin/dashboard").authenticated()
                 // Admin login — public
                 .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                 // Manager login — public

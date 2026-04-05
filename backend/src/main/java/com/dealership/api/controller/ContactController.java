@@ -3,6 +3,7 @@ package com.dealership.api.controller;
 import com.dealership.api.dto.ClientIntakeRequest;
 import com.dealership.api.dto.ContactRequest;
 import com.dealership.api.model.ContactSubmission;
+import com.dealership.api.repository.CarRepository;
 import com.dealership.api.service.ContactService;
 import com.dealership.api.service.DealershipConfigService;
 import com.dealership.api.service.EmailService;
@@ -30,13 +31,14 @@ public class ContactController {
     private final ContactService contactService;
     private final EmailService emailService;
     private final DealershipConfigService configService;
+    private final CarRepository carRepository;
 
-    // Constructor for dependency injection
     public ContactController(ContactService contactService, EmailService emailService,
-                             DealershipConfigService configService) {
+                             DealershipConfigService configService, CarRepository carRepository) {
         this.contactService = contactService;
         this.emailService = emailService;
         this.configService = configService;
+        this.carRepository = carRepository;
     }
 
     /**
@@ -128,5 +130,22 @@ public class ContactController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ContactSubmission>> getAll() {
         return ResponseEntity.ok(contactService.findAll());
+    }
+
+    /**
+     * GET /api/admin/dashboard — summary stats for the admin dashboard home page.
+     */
+    @GetMapping("/api/admin/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> getDashboard() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("carsAvailable", carRepository.countByStatus("available"));
+        stats.put("carsPending",   carRepository.countByStatus("pending"));
+        stats.put("carsSold",      carRepository.countByStatus("sold"));
+        stats.put("totalContacts", contactService.findAll().size());
+        // Most recent 5 contacts
+        List<ContactSubmission> recent = contactService.findAll();
+        stats.put("recentContacts", recent.subList(0, Math.min(5, recent.size())));
+        return ResponseEntity.ok(stats);
     }
 }

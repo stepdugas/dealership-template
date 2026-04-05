@@ -6,27 +6,23 @@
 
         <!-- Brand column -->
         <div class="lg:col-span-2">
-          <!-- [LOGO] placeholder -->
           <RouterLink to="/" class="inline-block mb-4">
             <img
-              v-if="LOGO_URL && !LOGO_URL.startsWith('[')"
-              :src="LOGO_URL"
-              :alt="DEALERSHIP_NAME + ' logo'"
+              v-if="siteSettings.logoUrl"
+              :src="siteSettings.logoUrl"
+              :alt="siteSettings.businessName + ' logo'"
               class="h-10 w-auto brightness-0 invert"
             />
-            <span v-else class="text-white font-bold text-2xl">{{ DEALERSHIP_NAME }}</span>
+            <span v-else class="text-white font-bold text-2xl">{{ siteSettings.businessName }}</span>
           </RouterLink>
 
-          <p class="text-sm leading-relaxed max-w-sm">
-            <!-- [TAGLINE] placeholder -->
-            {{ TAGLINE }}
-          </p>
+          <p class="text-sm leading-relaxed max-w-sm">{{ siteSettings.tagline }}</p>
 
           <!-- Social icons -->
           <div class="flex items-center gap-4 mt-6">
             <a
-              v-if="FACEBOOK_URL && !FACEBOOK_URL.startsWith('[')"
-              :href="FACEBOOK_URL"
+              v-if="siteSettings.facebookUrl && !siteSettings.facebookUrl.startsWith('[')"
+              :href="siteSettings.facebookUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-400 hover:text-white transition-colors"
@@ -38,8 +34,8 @@
               </svg>
             </a>
             <a
-              v-if="INSTAGRAM_URL && !INSTAGRAM_URL.startsWith('[')"
-              :href="INSTAGRAM_URL"
+              v-if="siteSettings.instagramUrl && !siteSettings.instagramUrl.startsWith('[')"
+              :href="siteSettings.instagramUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-400 hover:text-white transition-colors"
@@ -77,14 +73,14 @@
               <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
               </svg>
-              <a :href="'tel:' + PHONE" class="hover:text-white transition-colors">{{ PHONE }}</a>
+              <a :href="'tel:' + siteSettings.phone" class="hover:text-white transition-colors">{{ siteSettings.phone }}</a>
             </li>
             <li class="flex items-start gap-2">
               <!-- Email icon -->
               <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
-              <a :href="'mailto:' + EMAIL" class="hover:text-white transition-colors">{{ EMAIL }}</a>
+              <a :href="'mailto:' + siteSettings.email" class="hover:text-white transition-colors">{{ siteSettings.email }}</a>
             </li>
             <li class="flex items-start gap-2">
               <!-- Location icon -->
@@ -92,7 +88,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
-              <span>{{ ADDRESS }}<br />{{ CITY_STATE_ZIP }}</span>
+              <span>{{ siteSettings.address }}<br />{{ siteSettings.cityStateZip }}</span>
             </li>
           </ul>
 
@@ -101,11 +97,11 @@
             <h4 class="text-white text-xs font-semibold uppercase tracking-wider mb-2">Hours</h4>
             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
               <span class="text-gray-500">Mon–Fri</span>
-              <span>{{ HOURS.monday }}</span>
+              <span>{{ siteSettings.hours.monday }}</span>
               <span class="text-gray-500">Saturday</span>
-              <span>{{ HOURS.saturday }}</span>
+              <span>{{ siteSettings.hours.saturday }}</span>
               <span class="text-gray-500">Sunday</span>
-              <span>{{ HOURS.sunday }}</span>
+              <span>{{ siteSettings.hours.sunday }}</span>
             </div>
           </div>
         </div>
@@ -115,7 +111,7 @@
     <!-- Bottom bar -->
     <div class="border-t border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <p>&copy; {{ new Date().getFullYear() }} {{ DEALERSHIP_NAME }}. All rights reserved.</p>
+        <p>&copy; {{ new Date().getFullYear() }} {{ siteSettings.businessName }}. All rights reserved.</p>
         <div class="flex gap-5">
           <RouterLink to="/admin/login" class="hover:text-white transition-colors">Admin</RouterLink>
           <!-- Add Privacy Policy / Terms links as needed -->
@@ -128,11 +124,6 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import {
-  DEALERSHIP_NAME, TAGLINE, LOGO_URL,
-  PHONE, EMAIL, ADDRESS, CITY_STATE_ZIP,
-  HOURS, FACEBOOK_URL, INSTAGRAM_URL,
-} from '../../config'
 import { siteSettings } from '../../composables/useSiteSettings'
 
 const footerLinks = computed(() => {

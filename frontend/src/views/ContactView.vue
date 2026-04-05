@@ -132,8 +132,8 @@
               </div>
               <div>
                 <p class="text-sm text-gray-500 font-medium">Phone</p>
-                <a :href="'tel:' + PHONE" class="text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors">
-                  {{ PHONE }}
+                <a :href="'tel:' + siteSettings.phone" class="text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors">
+                  {{ siteSettings.phone }}
                 </a>
               </div>
             </div>
@@ -147,8 +147,8 @@
               </div>
               <div>
                 <p class="text-sm text-gray-500 font-medium">Email</p>
-                <a :href="'mailto:' + EMAIL" class="text-gray-900 font-bold hover:text-primary-600 transition-colors">
-                  {{ EMAIL }}
+                <a :href="'mailto:' + siteSettings.email" class="text-gray-900 font-bold hover:text-primary-600 transition-colors">
+                  {{ siteSettings.email }}
                 </a>
               </div>
             </div>
@@ -163,7 +163,7 @@
               </div>
               <div>
                 <p class="text-sm text-gray-500 font-medium">Address</p>
-                <p class="text-gray-900 font-bold">{{ ADDRESS }}<br />{{ CITY_STATE_ZIP }}</p>
+                <p class="text-gray-900 font-bold">{{ siteSettings.address }}<br />{{ siteSettings.cityStateZip }}</p>
               </div>
             </div>
           </div>
@@ -183,11 +183,11 @@
           <div class="rounded-2xl overflow-hidden shadow-md" data-aos="fade-up">
             <!-- [GOOGLE_MAPS_EMBED_URL] — paste your embed iframe src from Google Maps -->
             <div
-              v-if="GOOGLE_MAPS_EMBED_URL && !GOOGLE_MAPS_EMBED_URL.startsWith('[')"
+              v-if="siteSettings.googleMapsEmbedUrl"
               class="w-full h-56"
             >
               <iframe
-                :src="GOOGLE_MAPS_EMBED_URL"
+                :src="siteSettings.googleMapsEmbedUrl"
                 width="100%"
                 height="100%"
                 style="border:0"
@@ -201,7 +201,7 @@
               v-else
               class="w-full h-56 bg-gray-200 flex items-center justify-center text-gray-400 text-sm"
             >
-              [GOOGLE_MAPS_EMBED_URL] — set in config.js
+              Map — set Google Maps Embed URL in Admin → Settings
             </div>
           </div>
         </div>
@@ -211,10 +211,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import PageLayout from '../components/layout/PageLayout.vue'
 import { submitContact } from '../api'
-import { PHONE, EMAIL, ADDRESS, CITY_STATE_ZIP, HOURS, GOOGLE_MAPS_EMBED_URL } from '../config'
+import { siteSettings } from '../composables/useSiteSettings'
 
 const form = ref({
   firstName: '', lastName: '', email: '', phone: '', subject: '', message: '',
@@ -255,13 +255,13 @@ async function submit() {
   }
 }
 
-const hoursRows = [
-  { label: 'Monday',    value: HOURS.monday },
-  { label: 'Tuesday',   value: HOURS.tuesday },
-  { label: 'Wednesday', value: HOURS.wednesday },
-  { label: 'Thursday',  value: HOURS.thursday },
-  { label: 'Friday',    value: HOURS.friday },
-  { label: 'Saturday',  value: HOURS.saturday },
-  { label: 'Sunday',    value: HOURS.sunday },
-]
+const hoursRows = computed(() => [
+  { label: 'Monday',    value: siteSettings.hours.monday },
+  { label: 'Tuesday',   value: siteSettings.hours.tuesday },
+  { label: 'Wednesday', value: siteSettings.hours.wednesday },
+  { label: 'Thursday',  value: siteSettings.hours.thursday },
+  { label: 'Friday',    value: siteSettings.hours.friday },
+  { label: 'Saturday',  value: siteSettings.hours.saturday },
+  { label: 'Sunday',    value: siteSettings.hours.sunday },
+])
 </script>

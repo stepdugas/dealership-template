@@ -21,4 +21,6 @@ public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificatio
      * @return List of cars matching the status
      */
     List<Car> findAllByStatus(String status);
+
+    long countByStatus(String status);
 }

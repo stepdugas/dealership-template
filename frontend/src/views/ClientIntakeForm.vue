@@ -185,6 +185,48 @@
           </div>
         </div>
 
+        <!-- About Us Blurb -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">About Your Dealership <span class="text-gray-400 font-normal">(optional)</span></label>
+          <textarea
+            v-model="form.aboutBlurb"
+            rows="3"
+            placeholder="A short description of your dealership that will appear on the About Us page. e.g., Family-owned since 1998, serving the Akron area with quality used vehicles and honest deals."
+            class="form-input"
+          ></textarea>
+        </div>
+
+        <!-- Domain -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Desired Website Domain</label>
+          <input
+            v-model="form.domain"
+            type="text"
+            placeholder="e.g., johnsusedcars.com — or 'I need help choosing one'"
+            class="form-input"
+          />
+          <p class="text-xs text-gray-400 mt-1">We'll confirm availability and help you get it set up.</p>
+        </div>
+
+        <!-- Optional Pages -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Optional Pages <span class="text-gray-400 font-normal">(check all you'd like)</span></label>
+          <div class="space-y-2">
+            <label v-for="page in availablePages" :key="page.value" class="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                :value="page.value"
+                v-model="form.pages"
+                class="mt-0.5 w-4 h-4 accent-blue-600"
+              />
+              <span class="text-sm text-gray-700">
+                <span class="font-medium">{{ page.label }}</span>
+                <span class="text-gray-400"> — {{ page.description }}</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
         <!-- Notes -->
         <div class="mb-8">
           <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
@@ -195,6 +237,8 @@
             class="form-input"
           ></textarea>
         </div>
+
+        <p v-if="errors.submit" class="text-red-500 text-sm text-center mb-3">{{ errors.submit }}</p>
 
         <!-- Submit -->
         <button
@@ -217,6 +261,8 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import axios from 'axios'
+import { API_BASE_URL } from '../config'
 
 const form = reactive({
   businessName: '',
@@ -240,8 +286,17 @@ const form = reactive({
   primaryColor: '#3b82f6',
   facebook: '',
   instagram: '',
+  aboutBlurb: '',
+  domain: '',
+  pages: [],
   notes: ''
 })
+
+const availablePages = [
+  { value: 'Meet the Staff',    label: 'Meet the Staff',    description: 'Team grid with photos, names, titles, and bios' },
+  { value: 'Financing',         label: 'Financing',         description: 'Payment calculator + application form or external link' },
+  { value: 'Schedule Service',  label: 'Schedule Service',  description: 'Calendar connector or built-in appointment request form' },
+]
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const errors = ref({})
@@ -275,15 +330,39 @@ const validateForm = () => {
 
 const submitForm = async () => {
   if (!validateForm()) return
-  
   submitting.value = true
-  
-  // Simulate submission (in real app, send to backend)
-  setTimeout(() => {
-    console.log('Form submitted:', form)
+
+  // Flatten hours: { Monday: { open, close } } → { Monday: "9:00 AM – 6:00 PM" }
+  const hoursFlat = {}
+  for (const [day, val] of Object.entries(form.hours)) {
+    hoursFlat[day] = (val.open && val.close) ? `${val.open} – ${val.close}` : 'Closed'
+  }
+
+  try {
+    await axios.post(`${API_BASE_URL}/api/client-intake`, {
+      businessName: form.businessName,
+      tagline:      form.tagline,
+      phone:        form.phone,
+      email:        form.email,
+      address:      form.address,
+      city:         form.city,
+      state:        form.state,
+      zip:          form.zip,
+      hours:        hoursFlat,
+      primaryColor: form.primaryColor,
+      facebook:     form.facebook,
+      instagram:    form.instagram,
+      aboutBlurb:   form.aboutBlurb,
+      domain:       form.domain,
+      pages:        form.pages,
+      notes:        form.notes,
+    })
     submitted.value = true
+  } catch {
+    errors.value.submit = 'Something went wrong. Please email us directly at openclaw@gmail.com'
+  } finally {
     submitting.value = false
-  }, 1500)
+  }
 }
 </script>
 

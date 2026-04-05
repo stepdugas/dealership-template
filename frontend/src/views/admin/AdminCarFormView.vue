@@ -80,8 +80,30 @@
         <h2 class="font-semibold text-gray-900 mb-5">Technical Specs</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label class="form-label">VIN</label>
-            <input v-model="form.vin" class="form-input font-mono uppercase" placeholder="1HGBH41JXMN109186" maxlength="17" />
+            <label class="form-label">
+              VIN
+              <span v-if="vinLookupStatus" class="ml-2 font-normal text-xs"
+                :class="vinLookupStatus === 'ok' ? 'text-emerald-600' : vinLookupStatus === 'loading' ? 'text-gray-400' : 'text-red-500'">
+                {{ vinLookupStatus === 'ok' ? '✓ Auto-filled from VIN' : vinLookupStatus === 'loading' ? 'Looking up…' : 'VIN not found' }}
+              </span>
+            </label>
+            <div class="flex gap-2">
+              <input
+                v-model="form.vin"
+                @input="onVinInput"
+                class="form-input font-mono uppercase flex-1"
+                placeholder="1HGBH41JXMN109186"
+                maxlength="17"
+              />
+              <button
+                type="button"
+                @click="lookupVin"
+                :disabled="form.vin.length !== 17 || vinLookupStatus === 'loading'"
+                class="px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                Auto-fill
+              </button>
+            </div>
           </div>
           <div>
             <label class="form-label">Transmission</label>
@@ -222,11 +244,59 @@ const form = ref({
   engine: '', driveTrain: '', exteriorColor: '', interiorColor: '',
   description: '', images: [],
 })
-const featuresText = ref('')
-const fetchingCar  = ref(false)
-const saving       = ref(false)
-const uploading    = ref(false)
-const saveError    = ref('')
+const featuresText    = ref('')
+const fetchingCar     = ref(false)
+const saving          = ref(false)
+const uploading       = ref(false)
+const saveError       = ref('')
+const vinLookupStatus = ref('')  // '', 'loading', 'ok', 'error'
+
+let vinDebounceTimer = null
+function onVinInput() {
+  vinLookupStatus.value = ''
+  clearTimeout(vinDebounceTimer)
+  if (form.value.vin.length === 17) {
+    vinDebounceTimer = setTimeout(lookupVin, 600)
+  }
+}
+
+async function lookupVin() {
+  if (form.value.vin.length !== 17) return
+  vinLookupStatus.value = 'loading'
+  try {
+    const vin = form.value.vin.toUpperCase()
+    const res  = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vin}?format=json`)
+    const data = await res.json()
+    const v    = data?.Results?.[0]
+    if (!v || v.ErrorCode !== '0') { vinLookupStatus.value = 'error'; return }
+
+    if (v.ModelYear && !form.value.year) form.value.year  = v.ModelYear
+    if (v.Make      && !form.value.make) form.value.make  = toTitleCase(v.Make)
+    if (v.Model     && !form.value.model) form.value.model = toTitleCase(v.Model)
+    if (v.Trim      && !form.value.trim) form.value.trim  = v.Trim
+    // Engine displacement + cylinders
+    if (v.DisplacementL && !form.value.engine) {
+      const liters   = parseFloat(v.DisplacementL).toFixed(1)
+      const cylLabel = v.EngineCylinders ? `V${v.EngineCylinders}` : ''
+      const fuel     = v.FuelTypePrimary ? v.FuelTypePrimary.split('/')[0].trim() : ''
+      form.value.engine = [liters + 'L', cylLabel, fuel].filter(Boolean).join(' ')
+    }
+    // Drive type
+    if (v.DriveType && !form.value.driveTrain) {
+      const driveMap = { 'FWD/Front Wheel Drive': 'FWD', 'RWD/Rear Wheel Drive': 'RWD',
+        '4WD/4-Wheel Drive/4x4': '4WD', 'AWD/All Wheel Drive': 'AWD' }
+      form.value.driveTrain = driveMap[v.DriveType] || v.DriveType
+    }
+
+    vinLookupStatus.value = 'ok'
+  } catch {
+    vinLookupStatus.value = 'error'
+  }
+}
+
+function toTitleCase(str) {
+  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+}
 
 // Load existing car data in edit mode
 onMounted(async () => {

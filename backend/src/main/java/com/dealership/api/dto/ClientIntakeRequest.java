@@ -2,6 +2,7 @@ package com.dealership.api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,15 @@ public class ClientIntakeRequest {
     private String instagram;
 
     private String notes;
+
+    /** Short "About Us" blurb for the homepage/about page */
+    private String aboutBlurb;
+
+    /** Desired domain name or "I need help choosing one" */
+    private String domain;
+
+    /** Which optional pages the client wants enabled */
+    private List<String> pages;
 
     // Getters and Setters
     public String getBusinessName() {
@@ -148,4 +158,13 @@ public class ClientIntakeRequest {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public String getAboutBlurb() { return aboutBlurb; }
+    public void setAboutBlurb(String aboutBlurb) { this.aboutBlurb = aboutBlurb; }
+
+    public String getDomain() { return domain; }
+    public void setDomain(String domain) { this.domain = domain; }
+
+    public List<String> getPages() { return pages; }
+    public void setPages(List<String> pages) { this.pages = pages; }
 }

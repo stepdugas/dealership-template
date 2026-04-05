@@ -165,6 +165,47 @@
                 ></textarea>
               </div>
 
+              <!-- Trade-in toggle -->
+              <label class="flex items-center gap-3 cursor-pointer select-none">
+                <input v-model="form.hasTradeIn" type="checkbox" class="w-4 h-4 accent-primary-600 cursor-pointer" />
+                <span class="text-sm font-medium text-gray-700">I have a vehicle to trade in</span>
+              </label>
+
+              <!-- Trade-in fields -->
+              <div v-if="form.hasTradeIn" class="bg-gray-50 rounded-xl p-4 space-y-3 border border-gray-200">
+                <p class="text-xs font-semibold text-gray-600">Trade-In Vehicle</p>
+                <div class="grid grid-cols-3 gap-2">
+                  <div>
+                    <label class="form-label">Year</label>
+                    <input v-model="form.tradeYear" class="form-input" placeholder="2018" />
+                  </div>
+                  <div>
+                    <label class="form-label">Make</label>
+                    <input v-model="form.tradeMake" class="form-input" placeholder="Ford" />
+                  </div>
+                  <div>
+                    <label class="form-label">Model</label>
+                    <input v-model="form.tradeModel" class="form-input" placeholder="F-150" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="form-label">Mileage</label>
+                    <input v-model="form.tradeMileage" class="form-input" placeholder="78,000" />
+                  </div>
+                  <div>
+                    <label class="form-label">Condition</label>
+                    <select v-model="form.tradeCondition" class="form-input">
+                      <option value="">Select…</option>
+                      <option>Excellent</option>
+                      <option>Good</option>
+                      <option>Fair</option>
+                      <option>Poor</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               <button
                 type="submit"
                 class="btn-primary w-full"
@@ -277,7 +318,11 @@ function formatDate(dateString) {
 }
 
 // Contact form
-const form = ref({ name: '', email: '', phone: '', message: '' })
+const form = ref({
+  name: '', email: '', phone: '', message: '',
+  hasTradeIn: false,
+  tradeYear: '', tradeMake: '', tradeModel: '', tradeMileage: '', tradeCondition: '',
+})
 const submitting   = ref(false)
 const submitSuccess = ref(false)
 const submitError   = ref(false)
@@ -287,9 +332,19 @@ async function submitInquiry() {
   submitSuccess.value = false
   submitError.value   = false
   try {
-    await submitContact({ ...form.value, carId: car.value?.id })
+    let message = form.value.message || `I'm interested in this vehicle.`
+    if (form.value.hasTradeIn) {
+      message += `\n\nTrade-In: ${form.value.tradeYear} ${form.value.tradeMake} ${form.value.tradeModel}`.trim()
+      if (form.value.tradeMileage)   message += ` | Mileage: ${form.value.tradeMileage}`
+      if (form.value.tradeCondition) message += ` | Condition: ${form.value.tradeCondition}`
+    }
+    await submitContact({ name: form.value.name, email: form.value.email, phone: form.value.phone, message, carId: car.value?.id })
     submitSuccess.value = true
-    form.value = { name: '', email: '', phone: '', message: '' }
+    form.value = {
+      name: '', email: '', phone: '', message: '',
+      hasTradeIn: false,
+      tradeYear: '', tradeMake: '', tradeModel: '', tradeMileage: '', tradeCondition: '',
+    }
   } catch {
     submitError.value = true
   } finally {

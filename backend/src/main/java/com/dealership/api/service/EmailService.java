@@ -105,6 +105,25 @@ public class EmailService {
         body.append("Facebook:       ").append(request.getFacebook() != null && !request.getFacebook().isEmpty() ? request.getFacebook() : "(not provided)").append("\n");
         body.append("Instagram:      ").append(request.getInstagram() != null && !request.getInstagram().isEmpty() ? request.getInstagram() : "(not provided)").append("\n\n");
 
+        if (request.getAboutBlurb() != null && !request.getAboutBlurb().isBlank()) {
+            body.append("ABOUT US BLURB:\n");
+            body.append("---------------\n");
+            body.append(request.getAboutBlurb()).append("\n\n");
+        }
+
+        body.append("DOMAIN / WEBSITE:\n");
+        body.append("-----------------\n");
+        body.append(request.getDomain() != null && !request.getDomain().isBlank() ? request.getDomain() : "(not specified)").append("\n\n");
+
+        if (request.getPages() != null && !request.getPages().isEmpty()) {
+            body.append("OPTIONAL PAGES REQUESTED:\n");
+            body.append("-------------------------\n");
+            for (String page : request.getPages()) {
+                body.append("  • ").append(page).append("\n");
+            }
+            body.append("\n");
+        }
+
         body.append("ADDITIONAL NOTES:\n");
         body.append("-----------------\n");
         body.append(request.getNotes() != null && !request.getNotes().isEmpty() ? request.getNotes() : "(none)").append("\n\n");

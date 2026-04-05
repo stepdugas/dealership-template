@@ -61,6 +61,14 @@ export const siteSettings = reactive({
   notificationEmail: '',
   heroImage: 'sports',
   heroUrl: HERO_PRESETS[0].url,
+  // About Us page
+  aboutBlurb:        '',
+  aboutMission:      '',
+  aboutYearFounded:  '',
+  aboutStatYears:    '',
+  aboutStatVehicles: '',
+  aboutStatReviews:  '',
+  aboutStatTeam:     '',
   // Financing page
   financingBlurb:    '',
   financingApplyUrl: '',
@@ -103,6 +111,15 @@ export async function fetchSiteSettings() {
       siteSettings.heroImage = s.hero_image
       siteSettings.heroUrl   = getHeroUrl(s.hero_image)
     }
+
+    // About Us
+    if (s.about_blurb)         siteSettings.aboutBlurb        = s.about_blurb
+    if (s.about_mission)       siteSettings.aboutMission      = s.about_mission
+    if (s.about_year_founded)  siteSettings.aboutYearFounded  = s.about_year_founded
+    if (s.about_stat_years)    siteSettings.aboutStatYears    = s.about_stat_years
+    if (s.about_stat_vehicles) siteSettings.aboutStatVehicles = s.about_stat_vehicles
+    if (s.about_stat_reviews)  siteSettings.aboutStatReviews  = s.about_stat_reviews
+    if (s.about_stat_team)     siteSettings.aboutStatTeam     = s.about_stat_team
 
     // Financing
     if (s.financing_blurb)     siteSettings.financingBlurb    = s.financing_blurb

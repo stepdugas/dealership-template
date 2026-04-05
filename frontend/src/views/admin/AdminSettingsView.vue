@@ -148,6 +148,63 @@
         </div>
       </section>
 
+      <!-- ABOUT US CONTENT -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
+          About Us Page
+        </h2>
+        <p class="text-sm text-gray-500 mb-5 mt-3">
+          This content appears on your About Us page. Fill in what applies — blank fields won't show up.
+        </p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Your Story</label>
+            <textarea
+              v-model="form.about_blurb"
+              class="field resize-none"
+              rows="5"
+              placeholder="Tell customers who you are. e.g. Family-owned since 1998, serving the Akron area with quality used vehicles and honest deals. What started as a small lot has grown into one of the region's most trusted dealerships."
+            ></textarea>
+            <p class="text-xs text-gray-400 mt-1">This is the main paragraph customers will read. Write it in your own voice.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mission Statement <span class="text-gray-400 font-normal">(optional)</span></label>
+            <textarea
+              v-model="form.about_mission"
+              class="field resize-none"
+              rows="2"
+              placeholder='e.g. "To provide every customer with an honest, transparent, and enjoyable car-buying experience."'
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Year Founded <span class="text-gray-400 font-normal">(optional)</span></label>
+            <input v-model="form.about_year_founded" type="text" class="field max-w-xs" placeholder="e.g. 1998" />
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <p class="text-sm font-medium text-gray-700 mb-1">Stats / Social Proof <span class="text-gray-400 font-normal">(optional — leave blank to hide)</span></p>
+            <p class="text-xs text-gray-400 mb-3">These appear as big numbers on the About Us page. Only filled-in stats will show.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Years in Business</label>
+                <input v-model="form.about_stat_years" type="text" class="field" placeholder="20+" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Vehicles Sold</label>
+                <input v-model="form.about_stat_vehicles" type="text" class="field" placeholder="1,000+" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">5-Star Reviews</label>
+                <input v-model="form.about_stat_reviews" type="text" class="field" placeholder="500+" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Team Members</label>
+                <input v-model="form.about_stat_team" type="text" class="field" placeholder="12" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- FINANCING PAGE SETTINGS -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
@@ -390,6 +447,14 @@ const form = reactive({
   instagram_url: '',
   notification_email: '',
   hero_image: 'sports',
+  // about us
+  about_blurb: '',
+  about_mission: '',
+  about_year_founded: '',
+  about_stat_years: '',
+  about_stat_vehicles: '',
+  about_stat_reviews: '',
+  about_stat_team: '',
   // financing
   financing_blurb: '',
   financing_apply_url: '',
@@ -420,6 +485,8 @@ onMounted(async () => {
     // Populate text fields
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'about_blurb','about_mission','about_year_founded',
+                        'about_stat_years','about_stat_vehicles','about_stat_reviews','about_stat_team',
                         'financing_blurb','financing_apply_url',
                         'schedule_service_blurb','schedule_calendar_url']
     textFields.forEach(k => { if (s[k]) form[k] = s[k] })
@@ -457,6 +524,8 @@ async function save() {
     const updates = {}
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image',
+                        'about_blurb','about_mission','about_year_founded',
+                        'about_stat_years','about_stat_vehicles','about_stat_reviews','about_stat_team',
                         'financing_blurb','financing_apply_url',
                         'schedule_service_blurb','schedule_calendar_url']
     textFields.forEach(k => { updates[k] = form[k] })

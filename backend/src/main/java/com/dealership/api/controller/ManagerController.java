@@ -60,7 +60,10 @@ public class ManagerController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
-        if (!managerUsername.equals(req.getUsername()) || !managerPassword.equals(req.getPassword())) {
+        String effectivePassword = configService.get("manager_password");
+        if (effectivePassword == null) effectivePassword = managerPassword;
+
+        if (!managerUsername.equals(req.getUsername()) || !effectivePassword.equals(req.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Invalid credentials"));
         }

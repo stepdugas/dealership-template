@@ -122,6 +122,14 @@ export const adminUpdateSettings = (updates) => api.put('/api/manager/settings',
  */
 export const adminLogin = (credentials) => api.post('/api/admin/login', credentials)
 
+/** Admin changes their own password. Requires currentPassword + newPassword. */
+export const adminChangePassword = (currentPassword, newPassword) =>
+  api.post('/api/admin/change-password', { currentPassword, newPassword })
+
+/** Admin resets the manager password. Only requires newPassword. */
+export const adminChangeManagerPassword = (newPassword) =>
+  api.post('/api/admin/change-manager-password', { newPassword })
+
 // ── Contact submissions (admin) ─────────────────────────────────────────
 
 /** Fetch all contact submissions (admin only). */

@@ -148,6 +148,79 @@
         </div>
       </section>
 
+      <!-- PASSWORD MANAGEMENT -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
+          Password Management
+        </h2>
+        <p class="text-sm text-gray-500 mb-6 mt-3">
+          Update your admin password or reset the manager's password.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+          <!-- Change admin password -->
+          <div>
+            <h3 class="text-sm font-semibold text-gray-800 mb-3">Your Admin Password</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                <input v-model="pwForm.currentPassword" type="password" class="field" placeholder="••••••••" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <input v-model="pwForm.newPassword" type="password" class="field" placeholder="Min 6 characters" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                <input v-model="pwForm.confirmPassword" type="password" class="field" placeholder="••••••••" />
+              </div>
+              <div v-if="pwMsg.admin" :class="pwMsg.adminOk ? 'text-green-700' : 'text-red-600'" class="text-sm font-medium">
+                {{ pwMsg.admin }}
+              </div>
+              <button
+                @click="changeAdminPassword"
+                :disabled="pwSaving.admin"
+                class="px-5 py-2 bg-gray-800 text-white text-sm font-semibold rounded-lg hover:bg-gray-900
+                       disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                {{ pwSaving.admin ? 'Updating...' : 'Update My Password' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Reset manager password -->
+          <div>
+            <h3 class="text-sm font-semibold text-gray-800 mb-3">Manager Password</h3>
+            <p class="text-xs text-gray-500 mb-3">
+              You can reset the manager's password anytime — useful if a manager leaves or forgets theirs.
+            </p>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">New Manager Password</label>
+                <input v-model="pwForm.managerNewPassword" type="password" class="field" placeholder="Min 6 characters" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                <input v-model="pwForm.managerConfirmPassword" type="password" class="field" placeholder="••••••••" />
+              </div>
+              <div v-if="pwMsg.manager" :class="pwMsg.managerOk ? 'text-green-700' : 'text-red-600'" class="text-sm font-medium">
+                {{ pwMsg.manager }}
+              </div>
+              <button
+                @click="changeManagerPassword"
+                :disabled="pwSaving.manager"
+                class="px-5 py-2 bg-gray-800 text-white text-sm font-semibold rounded-lg hover:bg-gray-900
+                       disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                {{ pwSaving.manager ? 'Updating...' : 'Reset Manager Password' }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- Save button (bottom) -->
       <div class="flex justify-end pb-8">
         <button
@@ -166,7 +239,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { adminGetSettings, adminUpdateSettings } from '../../api/index'
+import { adminGetSettings, adminUpdateSettings, adminChangePassword, adminChangeManagerPassword } from '../../api/index'
 import { HERO_PRESETS, fetchSiteSettings } from '../../composables/useSiteSettings'
 
 const loading  = ref(true)
@@ -262,6 +335,59 @@ async function save() {
     errorMsg.value = 'Failed to save. Make sure the backend is running and try again.'
   } finally {
     saving.value = false
+  }
+}
+
+// ── Password management ──────────────────────────────────────────────────
+
+const pwForm = reactive({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+  managerNewPassword: '',
+  managerConfirmPassword: '',
+})
+
+const pwSaving = reactive({ admin: false, manager: false })
+const pwMsg    = reactive({ admin: '', adminOk: false, manager: '', managerOk: false })
+
+async function changeAdminPassword() {
+  pwMsg.admin = ''
+  if (pwForm.newPassword !== pwForm.confirmPassword) {
+    pwMsg.admin = 'New passwords do not match.'; pwMsg.adminOk = false; return
+  }
+  if (pwForm.newPassword.length < 6) {
+    pwMsg.admin = 'Password must be at least 6 characters.'; pwMsg.adminOk = false; return
+  }
+  pwSaving.admin = true
+  try {
+    await adminChangePassword(pwForm.currentPassword, pwForm.newPassword)
+    pwMsg.admin = 'Password updated successfully!'; pwMsg.adminOk = true
+    pwForm.currentPassword = ''; pwForm.newPassword = ''; pwForm.confirmPassword = ''
+  } catch (e) {
+    pwMsg.admin = e.response?.data?.error || 'Failed to update password.'; pwMsg.adminOk = false
+  } finally {
+    pwSaving.admin = false
+  }
+}
+
+async function changeManagerPassword() {
+  pwMsg.manager = ''
+  if (pwForm.managerNewPassword !== pwForm.managerConfirmPassword) {
+    pwMsg.manager = 'Passwords do not match.'; pwMsg.managerOk = false; return
+  }
+  if (pwForm.managerNewPassword.length < 6) {
+    pwMsg.manager = 'Password must be at least 6 characters.'; pwMsg.managerOk = false; return
+  }
+  pwSaving.manager = true
+  try {
+    await adminChangeManagerPassword(pwForm.managerNewPassword)
+    pwMsg.manager = 'Manager password updated!'; pwMsg.managerOk = true
+    pwForm.managerNewPassword = ''; pwForm.managerConfirmPassword = ''
+  } catch (e) {
+    pwMsg.manager = e.response?.data?.error || 'Failed to update manager password.'; pwMsg.managerOk = false
+  } finally {
+    pwSaving.manager = false
   }
 }
 

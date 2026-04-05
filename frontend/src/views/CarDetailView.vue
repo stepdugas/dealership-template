@@ -225,8 +225,8 @@
             <!-- Direct phone CTA -->
             <div class="mt-6 pt-6 border-t border-gray-100 text-center">
               <p class="text-xs text-gray-400 mb-2">Or call us directly</p>
-              <a :href="'tel:' + PHONE" class="text-xl font-extrabold text-primary-600 hover:underline">
-                {{ PHONE }}
+              <a :href="'tel:' + siteSettings.phone" class="text-xl font-extrabold text-primary-600 hover:underline">
+                {{ siteSettings.phone }}
               </a>
             </div>
           </div>
@@ -241,7 +241,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import PageLayout from '../components/layout/PageLayout.vue'
 import { getCar, submitContact } from '../api'
-import { PHONE } from '../config'
+import { siteSettings } from '../composables/useSiteSettings'
 
 const route  = useRoute()
 const car    = ref(null)

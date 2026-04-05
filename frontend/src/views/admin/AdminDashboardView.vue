@@ -12,7 +12,7 @@
     >
       <!-- Sidebar header -->
       <div class="flex items-center justify-between px-6 py-5 border-b border-white/10">
-        <RouterLink to="/" class="font-bold text-lg">{{ DEALERSHIP_NAME }}</RouterLink>
+        <RouterLink to="/" class="font-bold text-lg">{{ siteSettings.businessName }}</RouterLink>
         <button class="md:hidden text-gray-400 hover:text-white" @click="sidebarOpen = false">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -75,7 +75,7 @@
 <script setup>
 import { ref, h } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { DEALERSHIP_NAME } from '../../config'
+import { siteSettings } from '../../composables/useSiteSettings'
 
 const router     = useRouter()
 const sidebarOpen = ref(false)

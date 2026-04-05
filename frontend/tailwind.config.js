@@ -9,17 +9,17 @@ export default {
       colors: {
         // Primary brand color — swap in config.js and here per client
         primary: {
-          50:  '#f0f4ff',
-          100: '#e0eaff',
-          200: '#c7d7fd',
-          300: '#a5bcfb',
-          400: '#8098f7',
-          500: '#6172f0',   // default primary
-          600: '#4f55e5',
-          700: '#4143cb',
-          800: '#3638a5',
-          900: '#303483',
-          950: '#1e1f4d',
+          50:  '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',   // Monaca Auto Sales blue
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
         },
         dark: {
           900: '#0a0a0f',

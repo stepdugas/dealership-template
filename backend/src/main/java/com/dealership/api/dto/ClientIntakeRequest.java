@@ -45,8 +45,14 @@ public class ClientIntakeRequest {
 
     private String notes;
 
-    /** Short "About Us" blurb for the homepage/about page */
+    /** About Us page content */
     private String aboutBlurb;
+    private String aboutMission;
+    private String aboutYearFounded;
+    private String aboutStatYears;
+    private String aboutStatVehicles;
+    private String aboutStatReviews;
+    private String aboutStatTeam;
 
     /** Desired domain name or "I need help choosing one" */
     private String domain;
@@ -161,6 +167,24 @@ public class ClientIntakeRequest {
 
     public String getAboutBlurb() { return aboutBlurb; }
     public void setAboutBlurb(String aboutBlurb) { this.aboutBlurb = aboutBlurb; }
+
+    public String getAboutMission() { return aboutMission; }
+    public void setAboutMission(String aboutMission) { this.aboutMission = aboutMission; }
+
+    public String getAboutYearFounded() { return aboutYearFounded; }
+    public void setAboutYearFounded(String aboutYearFounded) { this.aboutYearFounded = aboutYearFounded; }
+
+    public String getAboutStatYears() { return aboutStatYears; }
+    public void setAboutStatYears(String aboutStatYears) { this.aboutStatYears = aboutStatYears; }
+
+    public String getAboutStatVehicles() { return aboutStatVehicles; }
+    public void setAboutStatVehicles(String aboutStatVehicles) { this.aboutStatVehicles = aboutStatVehicles; }
+
+    public String getAboutStatReviews() { return aboutStatReviews; }
+    public void setAboutStatReviews(String aboutStatReviews) { this.aboutStatReviews = aboutStatReviews; }
+
+    public String getAboutStatTeam() { return aboutStatTeam; }
+    public void setAboutStatTeam(String aboutStatTeam) { this.aboutStatTeam = aboutStatTeam; }
 
     public String getDomain() { return domain; }
     public void setDomain(String domain) { this.domain = domain; }

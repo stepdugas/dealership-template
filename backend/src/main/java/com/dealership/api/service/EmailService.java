@@ -105,10 +105,35 @@ public class EmailService {
         body.append("Facebook:       ").append(request.getFacebook() != null && !request.getFacebook().isEmpty() ? request.getFacebook() : "(not provided)").append("\n");
         body.append("Instagram:      ").append(request.getInstagram() != null && !request.getInstagram().isEmpty() ? request.getInstagram() : "(not provided)").append("\n\n");
 
-        if (request.getAboutBlurb() != null && !request.getAboutBlurb().isBlank()) {
-            body.append("ABOUT US BLURB:\n");
-            body.append("---------------\n");
-            body.append(request.getAboutBlurb()).append("\n\n");
+        if (request.getAboutBlurb() != null && !request.getAboutBlurb().isBlank()
+         || request.getAboutMission() != null && !request.getAboutMission().isBlank()
+         || request.getAboutYearFounded() != null && !request.getAboutYearFounded().isBlank()) {
+            body.append("ABOUT US CONTENT:\n");
+            body.append("-----------------\n");
+            if (request.getAboutYearFounded() != null && !request.getAboutYearFounded().isBlank())
+                body.append("Year Founded:   ").append(request.getAboutYearFounded()).append("\n");
+            if (request.getAboutBlurb() != null && !request.getAboutBlurb().isBlank())
+                body.append("Story:\n").append(request.getAboutBlurb()).append("\n");
+            if (request.getAboutMission() != null && !request.getAboutMission().isBlank())
+                body.append("Mission:        ").append(request.getAboutMission()).append("\n");
+            // Stats
+            boolean hasStats = (request.getAboutStatYears() != null && !request.getAboutStatYears().isBlank())
+                             || (request.getAboutStatVehicles() != null && !request.getAboutStatVehicles().isBlank())
+                             || (request.getAboutStatReviews() != null && !request.getAboutStatReviews().isBlank())
+                             || (request.getAboutStatTeam() != null && !request.getAboutStatTeam().isBlank());
+            if (hasStats) {
+                body.append("Stats:          ");
+                if (request.getAboutStatYears() != null && !request.getAboutStatYears().isBlank())
+                    body.append("Years=").append(request.getAboutStatYears()).append("  ");
+                if (request.getAboutStatVehicles() != null && !request.getAboutStatVehicles().isBlank())
+                    body.append("Sold=").append(request.getAboutStatVehicles()).append("  ");
+                if (request.getAboutStatReviews() != null && !request.getAboutStatReviews().isBlank())
+                    body.append("Reviews=").append(request.getAboutStatReviews()).append("  ");
+                if (request.getAboutStatTeam() != null && !request.getAboutStatTeam().isBlank())
+                    body.append("Team=").append(request.getAboutStatTeam());
+                body.append("\n");
+            }
+            body.append("\n");
         }
 
         body.append("DOMAIN / WEBSITE:\n");

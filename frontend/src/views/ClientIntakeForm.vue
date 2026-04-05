@@ -185,15 +185,56 @@
           </div>
         </div>
 
-        <!-- About Us Blurb -->
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">About Your Dealership <span class="text-gray-400 font-normal">(optional)</span></label>
-          <textarea
-            v-model="form.aboutBlurb"
-            rows="3"
-            placeholder="A short description of your dealership that will appear on the About Us page. e.g., Family-owned since 1998, serving the Akron area with quality used vehicles and honest deals."
-            class="form-input"
-          ></textarea>
+        <!-- About Us Content -->
+        <div class="mb-6 border border-gray-200 rounded-lg p-5 space-y-4">
+          <p class="text-sm font-semibold text-gray-700">About Us Page Content <span class="text-gray-400 font-normal">(optional — you can fill this in later)</span></p>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Your Story</label>
+            <textarea
+              v-model="form.aboutBlurb"
+              rows="4"
+              placeholder="Tell customers who you are. e.g., Family-owned since 1998, serving the Akron area with quality used vehicles and honest deals. No-pressure, transparent pricing, and a team that actually cares."
+              class="form-input"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mission Statement</label>
+            <textarea
+              v-model="form.aboutMission"
+              rows="2"
+              placeholder='e.g., "To provide every customer with an honest, transparent, and enjoyable car-buying experience."'
+              class="form-input"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Year Founded</label>
+            <input v-model="form.aboutYearFounded" type="text" placeholder="e.g. 1998" class="form-input max-w-xs" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Stats / Bragging Rights <span class="text-gray-400 font-normal">(leave blank to hide)</span></label>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Years in Business</label>
+                <input v-model="form.aboutStatYears" type="text" placeholder="e.g. 20+" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Vehicles Sold</label>
+                <input v-model="form.aboutStatVehicles" type="text" placeholder="e.g. 1,000+" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">5-Star Reviews</label>
+                <input v-model="form.aboutStatReviews" type="text" placeholder="e.g. 500+" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Team Members</label>
+                <input v-model="form.aboutStatTeam" type="text" placeholder="e.g. 12" class="form-input" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Domain -->
@@ -287,6 +328,12 @@ const form = reactive({
   facebook: '',
   instagram: '',
   aboutBlurb: '',
+  aboutMission: '',
+  aboutYearFounded: '',
+  aboutStatYears: '',
+  aboutStatVehicles: '',
+  aboutStatReviews: '',
+  aboutStatTeam: '',
   domain: '',
   pages: [],
   notes: ''
@@ -352,8 +399,14 @@ const submitForm = async () => {
       primaryColor: form.primaryColor,
       facebook:     form.facebook,
       instagram:    form.instagram,
-      aboutBlurb:   form.aboutBlurb,
-      domain:       form.domain,
+      aboutBlurb:        form.aboutBlurb,
+      aboutMission:      form.aboutMission,
+      aboutYearFounded:  form.aboutYearFounded,
+      aboutStatYears:    form.aboutStatYears,
+      aboutStatVehicles: form.aboutStatVehicles,
+      aboutStatReviews:  form.aboutStatReviews,
+      aboutStatTeam:     form.aboutStatTeam,
+      domain:            form.domain,
       pages:        form.pages,
       notes:        form.notes,
     })

@@ -61,6 +61,10 @@ export const siteSettings = reactive({
   notificationEmail: '',
   heroImage: 'sports',
   heroUrl: HERO_PRESETS[0].url,
+  // Page toggles — false by default, admin enables per client
+  showStaff:           false,
+  showFinancing:       false,
+  showScheduleService: false,
 })
 
 // Fetch settings from backend and populate the reactive object
@@ -90,6 +94,11 @@ export async function fetchSiteSettings() {
       siteSettings.heroImage = s.hero_image
       siteSettings.heroUrl   = getHeroUrl(s.hero_image)
     }
+
+    // Page toggles
+    siteSettings.showStaff           = s.page_staff            === 'true'
+    siteSettings.showFinancing       = s.page_financing        === 'true'
+    siteSettings.showScheduleService = s.page_schedule_service === 'true'
   } catch {
     // Backend not running or not set up — silently fall back to config.js defaults
   }

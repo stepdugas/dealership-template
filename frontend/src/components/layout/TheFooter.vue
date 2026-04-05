@@ -126,19 +126,24 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   DEALERSHIP_NAME, TAGLINE, LOGO_URL,
   PHONE, EMAIL, ADDRESS, CITY_STATE_ZIP,
   HOURS, FACEBOOK_URL, INSTAGRAM_URL,
 } from '../../config'
+import { siteSettings } from '../../composables/useSiteSettings'
 
-const footerLinks = [
-  { label: 'Browse Inventory', to: '/inventory' },
-  { label: 'About Us',         to: '/about' },
-  { label: 'Financing',        to: '/financing' },
-  { label: 'Sell Us Your Car', to: '/sell-your-car' },
-  { label: 'FAQ',              to: '/faq' },
-  { label: 'Contact',          to: '/contact' },
-]
+const footerLinks = computed(() => {
+  const links = [
+    { label: 'Browse Inventory', to: '/inventory' },
+    { label: 'About Us',         to: '/about' },
+  ]
+  if (siteSettings.showFinancing)       links.push({ label: 'Financing',       to: '/financing' })
+  if (siteSettings.showStaff)           links.push({ label: 'Meet the Staff',  to: '/staff' })
+  if (siteSettings.showScheduleService) links.push({ label: 'Schedule Service',to: '/schedule-service' })
+  links.push({ label: 'Contact', to: '/contact' })
+  return links
+})
 </script>

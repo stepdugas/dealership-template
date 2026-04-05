@@ -90,20 +90,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { DEALERSHIP_NAME, LOGO_URL, PHONE } from '../../config'
+import { DEALERSHIP_NAME, LOGO_URL } from '../../config'
+import { siteSettings } from '../../composables/useSiteSettings'
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)
 
-const navLinks = [
-  { label: 'Home',         to: '/' },
-  { label: 'Inventory',    to: '/inventory' },
-  { label: 'About Us',     to: '/about' },
-  { label: 'Financing',    to: '/financing' },
-  { label: 'Contact',      to: '/contact' },
-]
+const navLinks = computed(() => {
+  const links = [
+    { label: 'Home',      to: '/' },
+    { label: 'Inventory', to: '/inventory' },
+    { label: 'About Us',  to: '/about' },
+  ]
+  if (siteSettings.showFinancing)       links.push({ label: 'Financing',         to: '/financing' })
+  if (siteSettings.showStaff)           links.push({ label: 'Meet the Staff',     to: '/staff' })
+  if (siteSettings.showScheduleService) links.push({ label: 'Schedule Service',   to: '/schedule-service' })
+  links.push({ label: 'Contact', to: '/contact' })
+  return links
+})
 
 function handleScroll() {
   scrolled.value = window.scrollY > 20

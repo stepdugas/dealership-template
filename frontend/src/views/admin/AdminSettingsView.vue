@@ -148,6 +148,40 @@
         </div>
       </section>
 
+      <!-- ACTIVE PAGES -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
+          Active Pages
+        </h2>
+        <p class="text-sm text-gray-500 mb-6 mt-3">
+          Turn pages on or off. Only enabled pages will appear in the navigation menu.
+          Home, Inventory, About Us, and Contact are always visible.
+        </p>
+        <div class="space-y-4">
+          <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+            <div>
+              <p class="text-sm font-semibold text-gray-800">Meet the Staff</p>
+              <p class="text-xs text-gray-500 mt-0.5">Showcase your team with names, titles, photos, and bios</p>
+            </div>
+            <input v-model="form.page_staff" type="checkbox" class="w-5 h-5 accent-blue-600 cursor-pointer flex-shrink-0 ml-4" />
+          </label>
+          <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+            <div>
+              <p class="text-sm font-semibold text-gray-800">Financing</p>
+              <p class="text-xs text-gray-500 mt-0.5">Information about financing options available at your dealership</p>
+            </div>
+            <input v-model="form.page_financing" type="checkbox" class="w-5 h-5 accent-blue-600 cursor-pointer flex-shrink-0 ml-4" />
+          </label>
+          <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+            <div>
+              <p class="text-sm font-semibold text-gray-800">Schedule Service</p>
+              <p class="text-xs text-gray-500 mt-0.5">Let customers book service appointments online</p>
+            </div>
+            <input v-model="form.page_schedule_service" type="checkbox" class="w-5 h-5 accent-blue-600 cursor-pointer flex-shrink-0 ml-4" />
+          </label>
+        </div>
+      </section>
+
       <!-- PASSWORD MANAGEMENT -->
       <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-base font-semibold text-gray-900 mb-1 pb-3 border-b border-gray-100">
@@ -268,6 +302,10 @@ const form = reactive({
   instagram_url: '',
   notification_email: '',
   hero_image: 'sports',
+  // page toggles
+  page_staff: false,
+  page_financing: false,
+  page_schedule_service: false,
   // hours
   hours_monday_open: '09:00',    hours_monday_close: '18:00',    hours_monday_closed: false,
   hours_tuesday_open: '09:00',   hours_tuesday_close: '18:00',   hours_tuesday_closed: false,
@@ -286,6 +324,11 @@ onMounted(async () => {
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image']
     textFields.forEach(k => { if (s[k]) form[k] = s[k] })
+
+    // Populate page toggles
+    if (s.page_staff            !== undefined) form.page_staff            = s.page_staff            === 'true'
+    if (s.page_financing        !== undefined) form.page_financing        = s.page_financing        === 'true'
+    if (s.page_schedule_service !== undefined) form.page_schedule_service = s.page_schedule_service === 'true'
 
     // Populate hours
     days.forEach(day => {
@@ -311,6 +354,11 @@ async function save() {
     const textFields = ['business_name','tagline','phone','email','address',
                         'city_state_zip','facebook_url','instagram_url','notification_email','hero_image']
     textFields.forEach(k => { updates[k] = form[k] })
+
+    // Page toggles
+    updates.page_staff            = String(form.page_staff)
+    updates.page_financing        = String(form.page_financing)
+    updates.page_schedule_service = String(form.page_schedule_service)
 
     // Build hours strings and save raw fields
     days.forEach(day => {

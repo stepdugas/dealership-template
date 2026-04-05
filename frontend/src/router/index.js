@@ -44,7 +44,7 @@ const routes = [
     meta: { title: 'Get Your Site Online' },
   },
 
-  // ── Optional scaffold pages (route + placeholder component) ──────────
+  // ── Optional pages (shown only when toggled on in admin settings) ────
   {
     path: '/staff',
     name: 'Staff',
@@ -58,36 +58,10 @@ const routes = [
     meta: { title: 'Financing' },
   },
   {
-    path: '/sell-your-car',
-    name: 'SellYourCar',
-    component: () => import('../views/SellYourCarView.vue'),
-    meta: { title: 'Sell Us Your Car' },
-  },
-  {
-    path: '/faq',
-    name: 'FAQ',
-    component: () => import('../views/FaqView.vue'),
-    meta: { title: 'FAQ' },
-  },
-  {
-    path: '/blog',
-    name: 'Blog',
-    component: () => import('../views/BlogView.vue'),
-    meta: { title: 'Blog' },
-  },
-
-  // ── Manager panel ────────────────────────────────────────────────────
-  {
-    path: '/manager/login',
-    name: 'ManagerLogin',
-    component: () => import('../views/manager/ManagerLoginView.vue'),
-    meta: { title: 'Manager Login', isManagerPublic: true },
-  },
-  {
-    path: '/manager',
-    name: 'ManagerDashboard',
-    component: () => import('../views/manager/ManagerDashboardView.vue'),
-    meta: { title: 'Manager Dashboard', requiresManager: true },
+    path: '/schedule-service',
+    name: 'ScheduleService',
+    component: () => import('../views/ScheduleServiceView.vue'),
+    meta: { title: 'Schedule Service' },
   },
 
   // ── Admin panel ──────────────────────────────────────────────────────
@@ -170,14 +144,6 @@ router.beforeEach((to, from, next) => {
     const isLoggedIn = localStorage.getItem('admin_token')
     if (!isLoggedIn) {
       return next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
-    }
-  }
-
-  // Manager auth check
-  if (to.meta.requiresManager) {
-    const isLoggedIn = localStorage.getItem('manager_token')
-    if (!isLoggedIn) {
-      return next({ name: 'ManagerLogin', query: { redirect: to.fullPath } })
     }
   }
 

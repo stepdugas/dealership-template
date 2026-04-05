@@ -57,6 +57,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/client-intake").permitAll()
                 // Public site settings (hours, name, etc.)
                 .requestMatchers(HttpMethod.GET,  "/api/public/settings").permitAll()
+                // Public staff directory
+                .requestMatchers(HttpMethod.GET,  "/api/public/staff").permitAll()
                 // Public email test endpoint (for OpenClaw)
                 .requestMatchers(HttpMethod.POST, "/api/email/test").permitAll()
                 // Admin login — public

@@ -48,6 +48,10 @@
             <input v-model.number="form.price" type="number" class="form-input" placeholder="24995" required min="0" />
           </div>
           <div>
+            <label class="form-label">Estimated Value ($)</label>
+            <input v-model.number="form.kbbValue" type="number" class="form-input" placeholder="Optional — shown as comparison on listing" min="0" />
+          </div>
+          <div>
             <label class="form-label">Mileage</label>
             <input v-model.number="form.mileage" type="number" class="form-input" placeholder="45000" min="0" />
           </div>

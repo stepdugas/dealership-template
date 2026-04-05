@@ -106,6 +106,14 @@ export const refreshKBBValue = (id) => api.post(`/api/inventory/${id}/refresh-kb
  */
 export const submitContact = (payload) => api.post('/api/contact', payload)
 
+// ── Admin settings endpoints ────────────────────────────────────────
+
+/** Get all dealership config settings (admin). */
+export const adminGetSettings = () => api.get('/api/manager/settings')
+
+/** Bulk-update dealership config settings (admin). */
+export const adminUpdateSettings = (updates) => api.put('/api/manager/settings', updates)
+
 // ── Admin auth endpoint ─────────────────────────────────────────────────
 
 /**

@@ -21,11 +21,11 @@
         <div data-aos="fade-up" data-aos-delay="100">
           <h3 class="text-lg font-bold uppercase tracking-wider mb-5 opacity-80">Find Us</h3>
           <address class="not-italic text-sm leading-loose opacity-90">
-            {{ ADDRESS }}<br />
-            {{ CITY_STATE_ZIP }}
+            {{ siteSettings.address }}<br />
+            {{ siteSettings.cityStateZip }}
           </address>
           <a
-            :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ADDRESS + ' ' + CITY_STATE_ZIP)"
+            :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(siteSettings.address + ' ' + siteSettings.cityStateZip)"
             target="_blank"
             rel="noopener noreferrer"
             class="inline-block mt-4 text-sm underline underline-offset-2 hover:opacity-75 transition-opacity"
@@ -38,10 +38,10 @@
         <div data-aos="fade-up" data-aos-delay="200" class="flex flex-col justify-center">
           <h3 class="text-lg font-bold uppercase tracking-wider mb-5 opacity-80">Get In Touch</h3>
           <a
-            :href="'tel:' + PHONE"
+            :href="'tel:' + siteSettings.phone"
             class="text-3xl font-extrabold tracking-tight hover:opacity-75 transition-opacity"
           >
-            {{ PHONE }}
+            {{ siteSettings.phone }}
           </a>
           <p class="text-sm mt-2 opacity-70">Call or text anytime during business hours</p>
           <RouterLink
@@ -59,16 +59,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { PHONE, ADDRESS, CITY_STATE_ZIP, HOURS } from '../../config'
+import { siteSettings } from '../../composables/useSiteSettings'
 
-const hoursRows = [
-  { label: 'Monday',    value: HOURS.monday },
-  { label: 'Tuesday',   value: HOURS.tuesday },
-  { label: 'Wednesday', value: HOURS.wednesday },
-  { label: 'Thursday',  value: HOURS.thursday },
-  { label: 'Friday',    value: HOURS.friday },
-  { label: 'Saturday',  value: HOURS.saturday },
-  { label: 'Sunday',    value: HOURS.sunday },
-]
+const hoursRows = computed(() => [
+  { label: 'Monday',    value: siteSettings.hours.monday },
+  { label: 'Tuesday',   value: siteSettings.hours.tuesday },
+  { label: 'Wednesday', value: siteSettings.hours.wednesday },
+  { label: 'Thursday',  value: siteSettings.hours.thursday },
+  { label: 'Friday',    value: siteSettings.hours.friday },
+  { label: 'Saturday',  value: siteSettings.hours.saturday },
+  { label: 'Sunday',    value: siteSettings.hours.sunday },
+])
 </script>

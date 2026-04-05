@@ -128,6 +128,12 @@ const routes = [
         component: () => import('../views/admin/AdminContactsView.vue'),
         meta: { title: 'Contact Submissions', requiresAdmin: true },
       },
+      {
+        path: 'settings',
+        name: 'AdminSettings',
+        component: () => import('../views/admin/AdminSettingsView.vue'),
+        meta: { title: 'Site Settings', requiresAdmin: true },
+      },
     ],
   },
 

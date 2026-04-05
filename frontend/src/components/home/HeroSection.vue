@@ -5,11 +5,11 @@
 <template>
   <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-    <!-- Background image (Unsplash placeholder — swap for client photo) -->
+    <!-- Background image — set by admin via hero image picker -->
     <div class="absolute inset-0 z-0">
       <img
-        src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80"
-        alt="Luxury cars"
+        :src="siteSettings.heroUrl"
+        alt="Dealership"
         class="w-full h-full object-cover object-center"
       />
       <!-- Dark gradient overlay for text legibility -->
@@ -25,7 +25,7 @@
           data-aos="fade-up"
           data-aos-delay="0"
         >
-          Welcome to {{ DEALERSHIP_NAME }}
+          Welcome to {{ siteSettings.businessName }}
         </p>
 
         <!-- Main headline — [TAGLINE] placeholder -->
@@ -34,7 +34,7 @@
           data-aos="fade-up"
           data-aos-delay="100"
         >
-          {{ TAGLINE }}
+          {{ siteSettings.tagline }}
         </h1>
 
         <!-- Sub-copy -->
@@ -67,11 +67,11 @@
           data-aos="fade-up"
           data-aos-delay="400"
         >
-          <a :href="'tel:' + PHONE" class="flex items-center gap-2 hover:text-white transition-colors">
+          <a :href="'tel:' + siteSettings.phone" class="flex items-center gap-2 hover:text-white transition-colors">
             <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
             </svg>
-            {{ PHONE }}
+            {{ siteSettings.phone }}
           </a>
           <span class="flex items-center gap-2">
             <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,12 +95,12 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { DEALERSHIP_NAME, TAGLINE, PHONE, HOURS } from '../../config'
+import { siteSettings } from '../../composables/useSiteSettings'
 
 // Show today's hours in the hero quick-contact bar
 const todayHours = computed(() => {
   const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
   const today = days[new Date().getDay()]
-  return HOURS[today] || '[HOURS]'
+  return siteSettings.hours[today] || 'Call for hours'
 })
 </script>

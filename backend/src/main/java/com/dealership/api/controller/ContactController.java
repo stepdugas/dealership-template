@@ -4,6 +4,7 @@ import com.dealership.api.dto.ClientIntakeRequest;
 import com.dealership.api.dto.ContactRequest;
 import com.dealership.api.model.ContactSubmission;
 import com.dealership.api.service.ContactService;
+import com.dealership.api.service.DealershipConfigService;
 import com.dealership.api.service.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.Map;
  *
  * Public:  POST /api/contact                    (vehicle inquiry)
  * Public:  POST /api/client-intake              (client intake form)
+ * Public:  GET  /api/public/settings            (site config for frontend)
  * Admin:   GET  /api/admin/contacts             (view submissions)
  */
 @RestController
@@ -27,11 +29,23 @@ public class ContactController {
 
     private final ContactService contactService;
     private final EmailService emailService;
+    private final DealershipConfigService configService;
 
     // Constructor for dependency injection
-    public ContactController(ContactService contactService, EmailService emailService) {
+    public ContactController(ContactService contactService, EmailService emailService,
+                             DealershipConfigService configService) {
         this.contactService = contactService;
         this.emailService = emailService;
+        this.configService = configService;
+    }
+
+    /**
+     * GET /api/public/settings — returns all dealership config for the frontend.
+     * No authentication required.
+     */
+    @GetMapping("/api/public/settings")
+    public ResponseEntity<Map<String, String>> getPublicSettings() {
+        return ResponseEntity.ok(configService.getAll());
     }
 
     /**
@@ -39,7 +53,10 @@ public class ContactController {
      */
     @PostMapping("/api/contact")
     public ResponseEntity<ContactSubmission> submit(@Valid @RequestBody ContactRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(contactService.save(req));
+        ContactSubmission saved = contactService.save(req);
+        String vehicleInfo = saved.getCarId() != null ? "Vehicle ID #" + saved.getCarId() : "General Inquiry";
+        emailService.sendContactFormEmail(saved.getName(), saved.getEmail(), saved.getPhone(), saved.getMessage(), vehicleInfo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     /**

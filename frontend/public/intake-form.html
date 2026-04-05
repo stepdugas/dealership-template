@@ -129,28 +129,72 @@
         
         .hours-grid {
             display: grid;
-            gap: 15px;
+            gap: 10px;
         }
-        
+
         .hours-row {
-            display: grid;
-            grid-template-columns: 100px 1fr auto 1fr;
-            align-items: center;
-            gap: 15px;
-            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 14px;
             background: #f8fafc;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
-        
+
+        .hours-row.is-closed {
+            opacity: 0.5;
+        }
+
+        .hours-row.is-closed input[type="time"] {
+            pointer-events: none;
+            background: #e2e8f0;
+        }
+
+        .hours-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .hours-label {
             font-weight: 600;
-            font-size: 13px;
-            color: #334155;
+            font-size: 14px;
+            color: #1e293b;
         }
-        
+
+        .hours-times {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hours-times input[type="time"] {
+            flex: 1;
+            min-width: 0;
+        }
+
         .hours-separator {
             color: #94a3b8;
             font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .closed-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .closed-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #3b82f6;
         }
         
         .color-picker-group {
@@ -234,16 +278,46 @@
             border-top: 1px solid #e2e8f0;
         }
         
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 24px 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 20px 16px;
+            }
+
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            /* hours already use flex-column — nothing extra needed on mobile */
+
+            .submit-btn {
+                width: 100%;
+                padding: 14px 20px;
+            }
+        }
+
         @media print {
             body {
                 background: white;
                 padding: 0;
             }
-            
+
             .container {
                 box-shadow: none;
             }
-            
+
             input[type="text"],
             input[type="email"],
             input[type="tel"],
@@ -253,7 +327,7 @@
                 border: 1px solid #cbd5e1;
                 background: white;
             }
-            
+
             .submit-btn {
                 display: none;
             }
@@ -269,6 +343,7 @@
         
         <div class="content">
             <form id="intakeForm" name="client-intake" method="POST" netlify>
+                <input type="hidden" name="form-name" value="client-intake">
                 <!-- SECTION 1: BUSINESS BASICS -->
                 <div class="section">
                     <div class="section-title">Business Information</div>
@@ -346,52 +421,87 @@
                     
                     <div class="hours-grid">
                         <div class="hours-row">
-                            <div class="hours-label">Monday</div>
-                            <input type="time" name="monday_open" value="09:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="monday_close" value="18:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Monday</span>
+                                <label class="closed-label"><input type="checkbox" name="monday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="monday_open" value="09:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="monday_close" value="18:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Tuesday</div>
-                            <input type="time" name="tuesday_open" value="09:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="tuesday_close" value="18:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Tuesday</span>
+                                <label class="closed-label"><input type="checkbox" name="tuesday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="tuesday_open" value="09:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="tuesday_close" value="18:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Wednesday</div>
-                            <input type="time" name="wednesday_open" value="09:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="wednesday_close" value="18:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Wednesday</span>
+                                <label class="closed-label"><input type="checkbox" name="wednesday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="wednesday_open" value="09:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="wednesday_close" value="18:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Thursday</div>
-                            <input type="time" name="thursday_open" value="09:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="thursday_close" value="18:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Thursday</span>
+                                <label class="closed-label"><input type="checkbox" name="thursday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="thursday_open" value="09:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="thursday_close" value="18:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Friday</div>
-                            <input type="time" name="friday_open" value="09:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="friday_close" value="18:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Friday</span>
+                                <label class="closed-label"><input type="checkbox" name="friday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="friday_open" value="09:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="friday_close" value="18:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Saturday</div>
-                            <input type="time" name="saturday_open" value="10:00">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="saturday_close" value="17:00">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Saturday</span>
+                                <label class="closed-label"><input type="checkbox" name="saturday_closed"> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="saturday_open" value="10:00">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="saturday_close" value="17:00">
+                            </div>
                         </div>
-                        
+
                         <div class="hours-row">
-                            <div class="hours-label">Sunday</div>
-                            <input type="time" name="sunday_open" placeholder="Closed">
-                            <div class="hours-separator">to</div>
-                            <input type="time" name="sunday_close" placeholder="Closed">
+                            <div class="hours-row-header">
+                                <span class="hours-label">Sunday</span>
+                                <label class="closed-label"><input type="checkbox" name="sunday_closed" checked> Closed</label>
+                            </div>
+                            <div class="hours-times">
+                                <input type="time" name="sunday_open">
+                                <span class="hours-separator">to</span>
+                                <input type="time" name="sunday_close">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,23 +547,22 @@
                 
                 <!-- NOTE -->
                 <div class="note">
-                    <strong>How to submit:</strong> Once you've filled out this form, you can either print it and mail it to Stephanie, 
-                    email it back to her, or if you have the digital version, just save and send it. 
-                    She'll get all the details she needs to start customizing your site!
+                    <strong>Almost done!</strong> Once you hit Submit, your information goes directly to Stephanie.
+                    She'll review everything and reach out within 1–2 business days to get your site set up.
                 </div>
                 
                 <!-- SUBMIT -->
                 <div class="submit-section">
                     <button type="submit" class="submit-btn">Submit Form</button>
                     <p style="margin-top: 15px; font-size: 13px; color: #64748b;">
-                        Or print this form and fill it out by hand, then email to Stephanie
+                        Questions? Reach out to Stephanie at 724-504-2316
                     </p>
                 </div>
             </form>
         </div>
         
         <div class="footer">
-            <p>Dealership Website Form | Prepared by OpenClaw for Stephanie Dugas</p>
+            <p>Dealership Website Services | Stephanie Dugas</p>
             <p style="margin-top: 8px;">© 2026 All rights reserved</p>
         </div>
     </div>
@@ -462,6 +571,26 @@
         // Update color value display
         document.getElementById('primaryColor').addEventListener('input', function(e) {
             document.getElementById('colorValue').textContent = e.target.value.toUpperCase();
+        });
+
+        // Closed checkbox toggle
+        document.querySelectorAll('input[type="checkbox"][name$="_closed"]').forEach(function(checkbox) {
+            function applyClosedState() {
+                const row = checkbox.closest('.hours-row');
+                const timesBlock = row.querySelector('.hours-times');
+                const timeInputs = row.querySelectorAll('input[type="time"]');
+                if (checkbox.checked) {
+                    row.classList.add('is-closed');
+                    timesBlock.style.display = 'none';
+                    timeInputs.forEach(function(input) { input.disabled = true; });
+                } else {
+                    row.classList.remove('is-closed');
+                    timesBlock.style.display = 'flex';
+                    timeInputs.forEach(function(input) { input.disabled = false; });
+                }
+            }
+            applyClosedState();
+            checkbox.addEventListener('change', applyClosedState);
         });
         
         // Handle file selection
@@ -487,10 +616,15 @@
             // Collect form data for hidden field
             const hours = {};
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => {
-                const open = document.querySelector(`input[name="${day.toLowerCase()}_open"]`).value;
-                const close = document.querySelector(`input[name="${day.toLowerCase()}_close"]`).value;
-                if (open && close) {
-                    hours[day] = `${open} to ${close}`;
+                const closed = document.querySelector(`input[name="${day.toLowerCase()}_closed"]`).checked;
+                if (closed) {
+                    hours[day] = 'Closed';
+                } else {
+                    const open = document.querySelector(`input[name="${day.toLowerCase()}_open"]`).value;
+                    const close = document.querySelector(`input[name="${day.toLowerCase()}_close"]`).value;
+                    if (open && close) {
+                        hours[day] = `${open} to ${close}`;
+                    }
                 }
             });
             
@@ -502,12 +636,25 @@
             this.appendChild(hoursInput);
             
             try {
-                // Submit form data using Netlify Forms
-                const formData = new FormData(this);
+                // Build POST body manually — skip file inputs, always include form-name
+                const data = new URLSearchParams();
+                data.append('form-name', 'client-intake');
+                const elements = this.elements;
+                for (let i = 0; i < elements.length; i++) {
+                    const el = elements[i];
+                    if (!el.name || el.type === 'file' || el.type === 'submit') continue;
+                    if (el.type === 'checkbox') {
+                        data.append(el.name, el.checked ? 'yes' : 'no');
+                    } else {
+                        data.append(el.name, el.value);
+                    }
+                }
+                data.append('hours', JSON.stringify(hours));
+
                 await fetch('/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(formData).toString()
+                    body: data.toString()
                 });
                 
                 alert('✓ Thank you! Your form has been submitted successfully.\n\nStephanie will review your information and get in touch soon!');

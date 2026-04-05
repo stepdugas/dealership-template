@@ -5,8 +5,11 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
-import { DEALERSHIP_NAME } from './config'
+import { onMounted } from 'vue'
+import { fetchSiteSettings, siteSettings } from './composables/useSiteSettings'
 
-// Update the browser tab title with the dealership name
-document.title = DEALERSHIP_NAME
+onMounted(async () => {
+  await fetchSiteSettings()
+  document.title = siteSettings.businessName
+})
 </script>

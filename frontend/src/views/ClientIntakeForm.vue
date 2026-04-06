@@ -67,7 +67,7 @@
         <div class="p-6 border-t border-white/10">
           <p class="text-xs text-white/40 leading-relaxed">
             Questions? Email us at<br />
-            <a href="mailto:dugas.openclaw@gmail.com" class="text-primary-400 hover:underline">dugas.openclaw@gmail.com</a>
+            <a href="mailto:stepdugas@gmail.com" class="text-primary-400 hover:underline">stepdugas@gmail.com</a>
           </p>
         </div>
       </aside>
@@ -721,7 +721,7 @@ async function submitForm() {
     })
     submitted.value = true
   } catch {
-    submitError.value = 'Something went wrong. Please email us at dugas.openclaw@gmail.com'
+    submitError.value = 'Something went wrong. Please email us at stepdugas@gmail.com'
   } finally {
     submitting.value = false
   }

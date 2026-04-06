@@ -35,17 +35,18 @@ Keep this submission open in a browser tab — you'll copy from it frequently.
 
 ---
 
-## Step 2 — Create a New Railway Project (Backend + Database)
+## Step 2 — Create a New Render Project (Backend + Database)
 
 Each client gets their own backend so their data stays separate.
 
-1. Go to **railway.com** and click **New Project**
-2. Choose **Empty Project**
-3. Name it something like `clientname-dealership` (e.g. `dugas-dealership`)
-4. Click **Add Service → Database → PostgreSQL** to add the database
-5. Click **Add Service → GitHub Repo** and select `stepdugas/dealership-template`
-   - Set the **Root Directory** to `backend`
-6. Click on the backend service, go to **Variables**, and add all of these:
+1. Go to **render.com** and click **New → Web Service**
+2. Connect GitHub and select `stepdugas/dealership-template`
+3. Configure the service:
+   - **Name:** `clientname-dealership` (e.g. `monaca-auto-sales`)
+   - **Root Directory:** leave blank
+   - **Environment:** Docker
+   - **Branch:** master
+4. Under **Environment Variables**, click **Add from .env** and paste:
 
 ```
 ADMIN_USERNAME=admin
@@ -63,9 +64,25 @@ CLOUDINARY_API_SECRET=cjH2yicZrRYFl7KaHwcziu8lOJU
 SPRING_JPA_HIBERNATE_DDL_AUTO=update
 ```
 
-7. Go to the backend service → **Settings → Networking** → click **Generate Domain**
-8. Copy the Railway URL — it will look like `https://clientname-dealership.up.railway.app`
-9. Wait 3–5 minutes for the first deploy to finish (watch the deploy logs)
+5. Click **New → PostgreSQL**, name it `clientname-db`, leave everything else default
+6. Once the database is created, copy the **Internal Database URL**
+7. Go back to the web service → **Environment** and add:
+
+```
+DB_URL=jdbc:postgresql://[paste the hostname and database from the internal URL]
+DB_USERNAME=[from the internal URL]
+DB_PASSWORD=[from the internal URL]
+```
+
+   Example: if the internal URL is `postgresql://user:pass@dpg-xxxxx-a/mydb` then:
+   - `DB_URL=jdbc:postgresql://dpg-xxxxx-a/mydb`
+   - `DB_USERNAME=user`
+   - `DB_PASSWORD=pass`
+
+8. Copy the Render service URL — it will look like `https://clientname-dealership.onrender.com`
+9. Wait 5–10 minutes for the first deploy to finish (watch the logs)
+
+> **Note:** The free Render tier spins down after 15 minutes of inactivity. The first visitor after a quiet period may wait ~30 seconds. Upgrade to a paid instance ($7/month) for production sites.
 
 ---
 
@@ -82,9 +99,10 @@ Each client also gets their own Netlify site.
 4. Before deploying, go to **Site configuration → Environment variables** and add:
 
 ```
-VITE_API_BASE_URL=        ← paste the Railway URL from Step 2
+VITE_API_BASE_URL=              ← paste the Render URL from Step 2
 VITE_CLOUDINARY_CLOUD_NAME=dnq90fk5x
 VITE_CLOUDINARY_UPLOAD_PRESET=dealership_uploads
+VITE_HIDE_INTAKE_FORM=true
 ```
 
 5. Click **Deploy site**
@@ -210,4 +228,4 @@ Keep a secure record of each client's credentials. Recommended: use a password m
 → Double-check the `ADMIN_PASSWORD` env var in Railway matches what you're typing.
 
 **Backend is down / inventory won't load**
-→ Check Railway deploy logs. If the deploy failed, redeploy from the Railway dashboard.
+→ Check Render deploy logs. If the deploy failed, redeploy from the Render dashboard. Note: free tier spins down after inactivity — first request may take 30 seconds to wake up.

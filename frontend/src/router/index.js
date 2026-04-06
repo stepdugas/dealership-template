@@ -42,6 +42,9 @@ const routes = [
     name: 'ClientIntake',
     component: () => import('../views/ClientIntakeForm.vue'),
     meta: { title: 'Get Your Site Online' },
+    beforeEnter: () => {
+      if (import.meta.env.VITE_HIDE_INTAKE_FORM === 'true') return '/'
+    },
   },
 
   // ── Optional pages (shown only when toggled on in admin settings) ────

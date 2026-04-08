@@ -20,7 +20,17 @@
       "Bash(railway login:*)",
       "Bash(RAILWAY_TOKEN=baa6fd6b-8556-43eb-88d8-bfd88f292d04 railway whoami 2>&1)",
       "Bash(RAILWAY_TOKEN=baa6fd6b-8556-43eb-88d8-bfd88f292d04 railway status 2>&1)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(grep -E \"\\\\.vue$\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(find /c/Users/Dugas/Desktop/dealership-template/backend/src/main/resources/db/migration -name *.sql)",
+      "Bash(gh auth:*)",
+      "Bash(git remote:*)",
+      "Bash(rm \"C:/Users/Dugas/Desktop/dealership-template/frontend/src/views/ClientIntakeForm.vue\")",
+      "Bash(rm \"C:/Users/Dugas/Desktop/dealership-template/frontend/public/intake-form.html\")",
+      "Bash(rm \"C:/Users/Dugas/Desktop/dealership-template/backend/src/main/java/com/dealership/api/dto/ClientIntakeRequest.java\")"
     ]
   }
 }

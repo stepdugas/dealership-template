@@ -1,6 +1,5 @@
 package com.dealership.api.controller;
 
-import com.dealership.api.dto.ClientIntakeRequest;
 import com.dealership.api.dto.ContactRequest;
 import com.dealership.api.model.ContactSubmission;
 import com.dealership.api.repository.CarRepository;
@@ -59,31 +58,6 @@ public class ContactController {
         String vehicleInfo = saved.getCarId() != null ? "Vehicle ID #" + saved.getCarId() : "General Inquiry";
         emailService.sendContactFormEmail(saved.getName(), saved.getEmail(), saved.getPhone(), saved.getMessage(), vehicleInfo);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-    }
-
-    /**
-     * POST /api/client-intake — submit client intake form (public)
-     * Captures dealership info and emails it to admin
-     */
-    @PostMapping("/api/client-intake")
-    public ResponseEntity<Map<String, String>> submitClientIntake(@Valid @RequestBody ClientIntakeRequest req) {
-        try {
-            // Send email to admin
-            emailService.sendClientIntakeSubmission(req);
-
-            // Return success response
-            Map<String, String> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("message", "Thank you! We've received your information and will be in touch soon.");
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("status", "error");
-            errorResponse.put("message", "Failed to submit form. Please try again or contact us directly.");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
     }
 
     /**

@@ -53,8 +53,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/api/feeds/**").permitAll()
                 // Public contact form submission
                 .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
-                // Public client intake form
-                .requestMatchers(HttpMethod.POST, "/api/client-intake").permitAll()
                 // Public site settings (hours, name, etc.)
                 .requestMatchers(HttpMethod.GET,  "/api/public/settings").permitAll()
                 // Public staff directory
